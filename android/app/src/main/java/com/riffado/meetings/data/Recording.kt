@@ -27,4 +27,6 @@ data class Recording(
     val summary: String? = null,
     val error: String? = null,
     val titleIsDefault: Boolean = true,
+    /** Display names keyed by speaker number ("1", "2", ...) from a diarized transcript. */
+    val speakerNames: Map<String, String> = emptyMap(),
 )

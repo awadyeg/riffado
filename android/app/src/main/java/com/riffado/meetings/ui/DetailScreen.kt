@@ -3,6 +3,15 @@ package com.riffado.meetings.ui
 import android.content.Intent
 import android.net.Uri
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.ExperimentalLayoutApi
+import androidx.compose.foundation.layout.FlowRow
+import androidx.compose.foundation.layout.size
+import androidx.compose.material.icons.filled.Person
+import androidx.compose.material3.AssistChip
+import androidx.compose.material3.AssistChipDefaults
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.font.FontWeight
+import com.riffado.meetings.data.Speakers
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
@@ -71,12 +80,15 @@ fun DetailScreen(
     onBack: () -> Unit,
     onProcess: (summaryOnly: Boolean) -> Unit,
     onRename: (String) -> Unit,
+    onRenameSpeaker: (speaker: String, name: String) -> Unit,
     onDelete: () -> Unit,
 ) {
     val context = LocalContext.current
     var tab by rememberSaveable { mutableIntStateOf(if (recording.summary != null) 0 else 1) }
     var confirmDelete by remember { mutableStateOf(false) }
     var renaming by remember { mutableStateOf(false) }
+    var editingSpeaker by remember { mutableStateOf<String?>(null) }
+    val speakerIds = remember(recording.transcript) { Speakers.ids(recording.transcript) }
 
     Scaffold(
         topBar = {
@@ -94,7 +106,10 @@ fun DetailScreen(
                     IconButton(
                         enabled = recording.summary != null || recording.transcript != null,
                         onClick = {
-                            val text = listOfNotNull(recording.summary, recording.transcript).joinToString("\n\n---\n\n")
+                            val text = listOfNotNull(
+                                recording.summary,
+                                recording.transcript?.let { Speakers.applyNames(it, recording.speakerNames) },
+                            ).joinToString("\n\n---\n\n")
                             val send = Intent(Intent.ACTION_SEND)
                                 .setType("text/plain")
                                 .putExtra(Intent.EXTRA_SUBJECT, recording.title)
@@ -129,6 +144,9 @@ fun DetailScreen(
                 Text(it, color = MaterialTheme.colorScheme.error, style = MaterialTheme.typography.bodySmall)
             }
             ProcessButtons(recording, canProcess, onProcess)
+            if (speakerIds.isNotEmpty()) {
+                SpeakerChips(speakerIds, recording.speakerNames) { editingSpeaker = it }
+            }
 
             TabRow(selectedTabIndex = tab) {
                 Tab(selected = tab == 0, onClick = { tab = 0 }, text = { Text(stringResource(R.string.tab_summary)) })
@@ -147,7 +165,7 @@ fun DetailScreen(
                     if (transcript.isNullOrBlank()) {
                         Text(stringResource(R.string.transcript_empty), color = MaterialTheme.colorScheme.onSurfaceVariant)
                     } else {
-                        SelectionContainer { Text(transcript, style = MaterialTheme.typography.bodyMedium) }
+                        TranscriptView(transcript, recording.speakerNames)
                     }
                 }
             }
@@ -171,6 +189,38 @@ fun DetailScreen(
         )
     }
 
+    editingSpeaker?.let { speaker ->
+        var value by remember(speaker) { mutableStateOf(recording.speakerNames[speaker] ?: "") }
+        AlertDialog(
+            onDismissRequest = { editingSpeaker = null },
+            title = { Text(stringResource(R.string.speaker_rename_title, speaker)) },
+            text = {
+                Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
+                    OutlinedTextField(
+                        value = value,
+                        onValueChange = { value = it },
+                        singleLine = true,
+                        placeholder = { Text("Speaker $speaker") },
+                    )
+                    Text(
+                        stringResource(R.string.speaker_rename_hint),
+                        style = MaterialTheme.typography.bodySmall,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    )
+                }
+            },
+            confirmButton = {
+                TextButton(onClick = {
+                    editingSpeaker = null
+                    onRenameSpeaker(speaker, value)
+                }) { Text(stringResource(R.string.action_save)) }
+            },
+            dismissButton = {
+                TextButton(onClick = { editingSpeaker = null }) { Text(stringResource(R.string.action_cancel)) }
+            },
+        )
+    }
+
     if (renaming) {
         var value by remember { mutableStateOf(recording.title) }
         AlertDialog(
@@ -188,6 +238,63 @@ fun DetailScreen(
             },
         )
     }
+}
+
+@OptIn(ExperimentalLayoutApi::class)
+@Composable
+private fun SpeakerChips(ids: List<String>, names: Map<String, String>, onEdit: (String) -> Unit) {
+    Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
+        Text(
+            stringResource(R.string.speakers_title),
+            style = MaterialTheme.typography.labelMedium,
+            color = MaterialTheme.colorScheme.onSurfaceVariant,
+        )
+        FlowRow(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+            ids.forEach { id ->
+                AssistChip(
+                    onClick = { onEdit(id) },
+                    label = { Text(Speakers.label(id, names)) },
+                    leadingIcon = {
+                        Icon(Icons.Filled.Person, contentDescription = null, modifier = Modifier.size(18.dp))
+                    },
+                    colors = AssistChipDefaults.assistChipColors(labelColor = speakerColor(id)),
+                )
+            }
+        }
+    }
+}
+
+@Composable
+private fun TranscriptView(transcript: String, names: Map<String, String>) {
+    val turns = remember(transcript) { Speakers.parse(transcript) }
+    SelectionContainer {
+        Column(verticalArrangement = Arrangement.spacedBy(10.dp)) {
+            turns.forEach { turn ->
+                Column {
+                    if (turn.speaker != null) {
+                        Text(
+                            Speakers.label(turn.speaker, names),
+                            style = MaterialTheme.typography.labelLarge,
+                            fontWeight = FontWeight.SemiBold,
+                            color = speakerColor(turn.speaker),
+                        )
+                    }
+                    Text(turn.text, style = MaterialTheme.typography.bodyMedium)
+                }
+            }
+        }
+    }
+}
+
+@Composable
+private fun speakerColor(id: String): Color {
+    val palette = listOf(
+        MaterialTheme.colorScheme.primary,
+        MaterialTheme.colorScheme.tertiary,
+        MaterialTheme.colorScheme.secondary,
+        MaterialTheme.colorScheme.error,
+    )
+    return palette[((id.toIntOrNull() ?: 1) - 1).mod(palette.size)]
 }
 
 @Composable

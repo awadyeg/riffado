@@ -2,6 +2,8 @@ package com.riffado.meetings.ui
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.ExperimentalLayoutApi
+import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -40,7 +42,7 @@ import com.riffado.meetings.data.AppSettings
 import com.riffado.meetings.data.ProviderConfig
 import com.riffado.meetings.data.SettingsStore
 
-@OptIn(ExperimentalMaterial3Api::class)
+@OptIn(ExperimentalMaterial3Api::class, ExperimentalLayoutApi::class)
 @Composable
 fun SettingsScreen(initial: AppSettings, onSave: (AppSettings) -> Unit, onBack: () -> Unit) {
     var txUrl by remember { mutableStateOf(initial.transcription.baseUrl) }
@@ -74,9 +76,10 @@ fun SettingsScreen(initial: AppSettings, onSave: (AppSettings) -> Unit, onBack: 
             verticalArrangement = Arrangement.spacedBy(12.dp),
         ) {
             Text(stringResource(R.string.settings_presets), style = MaterialTheme.typography.titleSmall)
-            Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+            FlowRow(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
                 AssistChip(
                     onClick = {
+                        if (txUrl.contains("elevenlabs.io")) txKey = sumKey
                         txUrl = SettingsStore.OPENAI_URL
                         txModel = "whisper-1"
                         sumUrl = SettingsStore.OPENAI_URL
@@ -86,6 +89,7 @@ fun SettingsScreen(initial: AppSettings, onSave: (AppSettings) -> Unit, onBack: 
                 )
                 AssistChip(
                     onClick = {
+                        if (txUrl.contains("elevenlabs.io")) txKey = sumKey
                         txUrl = SettingsStore.GROQ_URL
                         txModel = SettingsStore.GROQ_TRANSCRIPTION_MODEL
                         sumUrl = SettingsStore.GROQ_URL
@@ -93,7 +97,21 @@ fun SettingsScreen(initial: AppSettings, onSave: (AppSettings) -> Unit, onBack: 
                     },
                     label = { Text("Groq") },
                 )
+                AssistChip(
+                    onClick = {
+                        if (!txUrl.contains("elevenlabs.io") && sumKey.isBlank() && sumUrl == txUrl) sumKey = txKey
+                        if (!txUrl.contains("elevenlabs.io")) txKey = ""
+                        txUrl = SettingsStore.ELEVENLABS_URL
+                        txModel = SettingsStore.ELEVENLABS_MODEL
+                    },
+                    label = { Text(stringResource(R.string.settings_preset_speakers)) },
+                )
             }
+            Text(
+                stringResource(R.string.settings_speakers_help),
+                style = MaterialTheme.typography.bodySmall,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+            )
 
             HorizontalDivider()
             Text(stringResource(R.string.settings_transcription), style = MaterialTheme.typography.titleMedium)

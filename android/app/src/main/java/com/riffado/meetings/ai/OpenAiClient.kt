@@ -26,7 +26,7 @@ class ApiException(val code: Int, message: String) : IOException(message) {
 
 /** Minimal client for OpenAI-compatible `/audio/transcriptions` and `/chat/completions`. */
 object OpenAiClient {
-    private val http = OkHttpClient.Builder()
+    internal val http = OkHttpClient.Builder()
         .connectTimeout(30, TimeUnit.SECONDS)
         .writeTimeout(10, TimeUnit.MINUTES)
         .readTimeout(10, TimeUnit.MINUTES)
@@ -83,7 +83,7 @@ object OpenAiClient {
         }
     }
 
-    private fun errorMessage(code: Int, body: String): String {
+    internal fun errorMessage(code: Int, body: String): String {
         val detail = runCatching {
             val obj = json.parseToJsonElement(body) as JsonObject
             val err = obj["error"]

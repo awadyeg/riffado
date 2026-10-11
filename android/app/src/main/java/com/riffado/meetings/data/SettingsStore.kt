@@ -26,9 +26,13 @@ data class AppSettings(
     val canSummarize: Boolean
         get() = summary.baseUrl.isNotBlank() && summary.model.isNotBlank()
 
-    /** Summary config with the transcription key filled in when the summary key is blank. */
+    /** True when transcription goes to ElevenLabs Scribe, which separates speakers. */
+    val usesElevenLabs: Boolean
+        get() = transcription.baseUrl.contains("elevenlabs.io")
+
+    /** Summary config with the transcription key filled in when the summary key is blank and compatible. */
     val effectiveSummary: ProviderConfig
-        get() = if (summary.apiKey.isBlank()) summary.copy(apiKey = transcription.apiKey) else summary
+        get() = if (summary.apiKey.isBlank() && !usesElevenLabs) summary.copy(apiKey = transcription.apiKey) else summary
 
     private fun isLocal(url: String): Boolean = url.startsWith("http://")
 }
@@ -74,6 +78,9 @@ class SettingsStore(context: Context) {
         const val GROQ_URL = "https://api.groq.com/openai/v1"
         const val GROQ_TRANSCRIPTION_MODEL = "whisper-large-v3"
         const val GROQ_SUMMARY_MODEL = "openai/gpt-oss-120b"
+
+        const val ELEVENLABS_URL = "https://api.elevenlabs.io/v1"
+        const val ELEVENLABS_MODEL = "scribe_v2"
 
         private val RETIRED_MODELS = mapOf("llama-3.3-70b-versatile" to GROQ_SUMMARY_MODEL)
 

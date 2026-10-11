@@ -34,6 +34,15 @@ class AppViewModel(application: Application) : AndroidViewModel(application) {
         }
     }
 
+    fun renameSpeaker(id: String, speaker: String, name: String) {
+        viewModelScope.launch {
+            app.recordings.update(id) {
+                val names = if (name.isBlank()) it.speakerNames - speaker else it.speakerNames + (speaker to name.trim())
+                it.copy(speakerNames = names)
+            }
+        }
+    }
+
     fun delete(id: String) {
         viewModelScope.launch { app.recordings.delete(id) }
     }

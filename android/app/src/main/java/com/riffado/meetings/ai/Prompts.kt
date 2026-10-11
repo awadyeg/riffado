@@ -20,6 +20,8 @@ Use this Markdown structure and nothing else:
 ## Action items
 - [ ] task (owner if mentioned, due date if mentioned)
 
+When transcript lines start with a speaker label ("Ahmed: ..." or "Speaker 2: ..."), that label identifies who said the line.
+Attribute opinions, decisions, and action items to the right speaker using those labels exactly as written.
 Be factual. Do not invent names, numbers, or commitments that are not in the transcript."""
 
     /** Extracts the `# title` line from generated minutes, if present. */

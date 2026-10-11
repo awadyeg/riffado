@@ -60,10 +60,15 @@
     <string name="settings_summary">الملخص</string>
     <string name="settings_base_url">عنوان API</string>
     <string name="settings_api_key">مفتاح API</string>
-    <string name="settings_api_key_summary_hint">اتركه فارغًا لاستخدام مفتاح التفريغ</string>
+    <string name="settings_api_key_summary_hint">اتركه فارغًا لاستخدام مفتاح التفريغ (إلا مع ElevenLabs)</string>
     <string name="settings_model">النموذج</string>
     <string name="settings_language">رمز اللغة (اختياري، مثل ar أو en)</string>
     <string name="settings_auto">التفريغ والتلخيص تلقائيًا بعد انتهاء التسجيل</string>
     <string name="settings_saved">تم حفظ الإعدادات</string>
     <string name="settings_privacy">التسجيلات تبقى على هذا الهاتف. يتم إرسال الصوت والنص فقط إلى مقدمي الخدمة الذين تحددهم هنا. مفاتيح API مشفرة باستخدام Android Keystore.</string>
+    <string name="speakers_title">المتحدثون (اضغط لتغيير الاسم)</string>
+    <string name="speaker_rename_title">اسم المتحدث %1$s</string>
+    <string name="speaker_rename_hint">بعد تسمية المتحدثين اضغط \"إعادة إنشاء الملخص\" ليستخدم الملخص الأسماء.</string>
+    <string name="settings_preset_speakers">ElevenLabs (المتحدثون)</string>
+    <string name="settings_speakers_help">لفصل المتحدثين (Speaker 1 و Speaker 2) اختر ElevenLabs للتفريغ وضع مفتاح ElevenLabs. مفتاح Groq أو OpenAI ينتقل إلى قسم الملخص.</string>
 </resources>

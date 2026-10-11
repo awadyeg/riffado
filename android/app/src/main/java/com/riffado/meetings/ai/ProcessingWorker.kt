@@ -20,9 +20,12 @@ import androidx.work.workDataOf
 import com.riffado.meetings.MainActivity
 import com.riffado.meetings.MeetingsApp
 import com.riffado.meetings.R
+import com.riffado.meetings.data.AppSettings
 import com.riffado.meetings.data.RecordingStatus
+import com.riffado.meetings.data.Speakers
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
+import java.io.File
 import java.io.IOException
 
 /** Transcribes every segment of a recording, then generates meeting minutes. */
@@ -43,19 +46,28 @@ class ProcessingWorker(context: Context, params: WorkerParameters) : CoroutineWo
             if (!summaryOnly || transcript.isNullOrBlank()) {
                 if (!settings.canTranscribe) throw IllegalStateException("Transcription provider is not configured")
                 app.recordings.update(id) { it.copy(status = RecordingStatus.TRANSCRIBING, error = null) }
-                val parts = withContext(Dispatchers.IO) {
-                    app.recordings.segmentFiles(recording)
-                        .filter { it.exists() && it.length() > 0 }
-                        .map { OpenAiClient.transcribe(settings.transcription, it, settings.language) }
+                val files = app.recordings.segmentFiles(recording).filter { it.exists() && it.length() > 0 }
+                transcript = withContext(Dispatchers.IO) {
+                    if (settings.usesElevenLabs) {
+                        transcribeWithSpeakers(id, files, settings)
+                    } else {
+                        files.map { OpenAiClient.transcribe(settings.transcription, it, settings.language) }
+                            .filter { it.isNotBlank() }
+                            .joinToString("\n\n")
+                    }
                 }
-                transcript = parts.filter { it.isNotBlank() }.joinToString("\n\n")
-                app.recordings.update(id) { it.copy(transcript = transcript) }
+                app.recordings.update(id) { it.copy(transcript = transcript, speakerNames = emptyMap()) }
             }
 
             if (settings.canSummarize && !transcript.isNullOrBlank()) {
                 app.recordings.update(id) { it.copy(status = RecordingStatus.SUMMARIZING) }
                 val summary = withContext(Dispatchers.IO) {
-                    OpenAiClient.chat(settings.effectiveSummary, Prompts.MEETING_SYSTEM, transcript)
+                    val names = app.recordings.get(id)?.speakerNames ?: emptyMap()
+                    OpenAiClient.chat(
+                        settings.effectiveSummary,
+                        Prompts.MEETING_SYSTEM,
+                        Speakers.applyNames(transcript, names),
+                    )
                 }
                 val generatedTitle = Prompts.titleFrom(summary)
                 app.recordings.update(id) {
@@ -83,6 +95,21 @@ class ProcessingWorker(context: Context, params: WorkerParameters) : CoroutineWo
                 notifyResult(id.hashCode(), applicationContext.getString(R.string.notif_failed, failed?.title ?: ""))
                 Result.failure()
             }
+        }
+    }
+
+    /** ElevenLabs numbers speakers per upload, so segments are joined first to keep speaker numbers consistent. */
+    private fun transcribeWithSpeakers(id: String, files: List<File>, settings: AppSettings): String {
+        if (files.size <= 1) {
+            return files.firstOrNull()?.let { ElevenLabsClient.transcribe(settings.transcription, it, settings.language) }
+                ?: throw IllegalStateException("Recording has no audio")
+        }
+        val joined = File(applicationContext.cacheDir, "$id-joined.m4a")
+        try {
+            AudioConcat.concat(files, joined)
+            return ElevenLabsClient.transcribe(settings.transcription, joined, settings.language)
+        } finally {
+            joined.delete()
         }
     }
 

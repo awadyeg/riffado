@@ -7,6 +7,7 @@ Standalone Android app that turns the phone into a meeting recorder: record, tra
 - Background recording in a foreground service (screen off, other apps open). Pause, resume, and stop from the notification.
 - AAC/m4a, 16 kHz mono, 32 kbps (about 14 MB per hour). Long meetings roll over to a new file every 20 MB so each upload stays under the 25 MB limit of OpenAI and Groq.
 - Transcription via any OpenAI-compatible `/audio/transcriptions` endpoint (OpenAI `whisper-1`, Groq `whisper-large-v3`, or a local Whisper server over `http://`).
+- Speaker separation via ElevenLabs Scribe (`scribe_v2`): transcripts come back as `Speaker 1`, `Speaker 2`, ... Speakers can be renamed per recording, and the summary attributes points, decisions, and action items by name. Multi-part recordings are joined on the phone before upload so speaker numbers stay consistent.
 - Meeting minutes via `/chat/completions`: summary, key points, decisions, action items, plus an auto-generated title. Written in the transcript language.
 - Runs through WorkManager, so processing continues after the app is closed and retries on network errors and 429/5xx.
 - English and Arabic UI.

@@ -102,6 +102,7 @@ private fun App(viewModel: AppViewModel) {
                     onBack = { screen = null },
                     onProcess = { summaryOnly -> viewModel.process(recording.id, summaryOnly) },
                     onRename = { viewModel.rename(recording.id, it) },
+                    onRenameSpeaker = { speaker, name -> viewModel.renameSpeaker(recording.id, speaker, name) },
                     onDelete = {
                         viewModel.delete(recording.id)
                         screen = null

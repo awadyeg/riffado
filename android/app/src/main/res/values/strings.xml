@@ -60,10 +60,15 @@
     <string name="settings_summary">Summary</string>
     <string name="settings_base_url">API base URL</string>
     <string name="settings_api_key">API key</string>
-    <string name="settings_api_key_summary_hint">Leave empty to reuse the transcription key</string>
+    <string name="settings_api_key_summary_hint">Leave empty to reuse the transcription key (not with ElevenLabs)</string>
     <string name="settings_model">Model</string>
     <string name="settings_language">Language code (optional, e.g. ar, en)</string>
     <string name="settings_auto">Transcribe and summarize automatically after recording</string>
     <string name="settings_saved">Settings saved</string>
     <string name="settings_privacy">Recordings stay on this phone. Audio and transcripts are sent only to the providers you configure here. API keys are encrypted with the Android Keystore.</string>
+    <string name="speakers_title">Speakers (tap to rename)</string>
+    <string name="speaker_rename_title">Name for Speaker %1$s</string>
+    <string name="speaker_rename_hint">After naming speakers, tap Regenerate summary so the minutes use the names.</string>
+    <string name="settings_preset_speakers">ElevenLabs (speakers)</string>
+    <string name="settings_speakers_help">To separate speakers (Speaker 1, Speaker 2), choose ElevenLabs for transcription and paste an ElevenLabs key. Your Groq or OpenAI key moves to the Summary section.</string>
 </resources>
