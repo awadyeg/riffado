@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Riffado للاجتماعات</string>
+
+    <string name="channel_recording">التسجيل</string>
+    <string name="channel_processing">التفريغ والملخص</string>
+    <string name="notif_recording">جاري تسجيل الاجتماع</string>
+    <string name="notif_paused">التسجيل متوقف مؤقتًا</string>
+    <string name="notif_processing">جاري معالجة %1$s</string>
+    <string name="notif_done">الملخص جاهز: %1$s</string>
+    <string name="notif_failed">فشلت المعالجة: %1$s</string>
+
+    <string name="action_pause">إيقاف مؤقت</string>
+    <string name="action_resume">استكمال</string>
+    <string name="action_stop">إنهاء</string>
+    <string name="action_record">ابدأ التسجيل</string>
+    <string name="action_settings">الإعدادات</string>
+    <string name="action_back">رجوع</string>
+    <string name="action_delete">حذف</string>
+    <string name="action_share">مشاركة</string>
+    <string name="action_rename">إعادة تسمية</string>
+    <string name="action_transcribe">تفريغ وتلخيص</string>
+    <string name="action_retry">إعادة المحاولة</string>
+    <string name="action_resummarize">إعادة إنشاء الملخص</string>
+    <string name="action_save">حفظ</string>
+    <string name="action_cancel">إلغاء</string>
+    <string name="action_play">تشغيل</string>
+    <string name="action_open_settings">فتح الإعدادات</string>
+
+    <string name="home_title">الاجتماعات</string>
+    <string name="home_empty">لا توجد تسجيلات بعد. اضغط الزر لتسجيل أول اجتماع.</string>
+    <string name="home_not_configured">أضف مفتاح API في الإعدادات للحصول على التفريغ والملخص.</string>
+    <string name="recording_live">جاري التسجيل</string>
+    <string name="recording_paused">متوقف مؤقتًا</string>
+    <string name="default_title">اجتماع %1$s</string>
+    <string name="part_of">جزء %1$d من %2$d</string>
+
+    <string name="status_recording">جاري التسجيل</string>
+    <string name="status_recorded">لم يتم التفريغ</string>
+    <string name="status_queued">في الانتظار</string>
+    <string name="status_transcribing">جاري التفريغ…</string>
+    <string name="status_summarizing">جاري التلخيص…</string>
+    <string name="status_done">جاهز</string>
+    <string name="status_failed">فشل</string>
+    <string name="status_interrupted">انقطع</string>
+
+    <string name="tab_summary">الملخص</string>
+    <string name="tab_transcript">النص</string>
+    <string name="summary_empty">لا يوجد ملخص بعد.</string>
+    <string name="transcript_empty">لا يوجد نص بعد.</string>
+    <string name="delete_confirm_title">حذف التسجيل؟</string>
+    <string name="delete_confirm_body">سيتم حذف الصوت والنص والملخص من هذا الهاتف.</string>
+    <string name="rename_title">إعادة تسمية</string>
+
+    <string name="permission_needed">يلزم إذن الميكروفون للتسجيل.</string>
+
+    <string name="settings_title">الإعدادات</string>
+    <string name="settings_presets">إعداد سريع</string>
+    <string name="settings_transcription">التفريغ</string>
+    <string name="settings_summary">الملخص</string>
+    <string name="settings_base_url">عنوان API</string>
+    <string name="settings_api_key">مفتاح API</string>
+    <string name="settings_api_key_summary_hint">اتركه فارغًا لاستخدام مفتاح التفريغ</string>
+    <string name="settings_model">النموذج</string>
+    <string name="settings_language">رمز اللغة (اختياري، مثل ar أو en)</string>
+    <string name="settings_auto">التفريغ والتلخيص تلقائيًا بعد انتهاء التسجيل</string>
+    <string name="settings_saved">تم حفظ الإعدادات</string>
+    <string name="settings_privacy">التسجيلات تبقى على هذا الهاتف. يتم إرسال الصوت والنص فقط إلى مقدمي الخدمة الذين تحددهم هنا. مفاتيح API مشفرة باستخدام Android Keystore.</string>
+</resources>
