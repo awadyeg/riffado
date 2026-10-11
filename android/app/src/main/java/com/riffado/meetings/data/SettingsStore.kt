@@ -63,7 +63,7 @@ class SettingsStore(context: Context) {
         summary = ProviderConfig(
             baseUrl = prefs.getString(K_SUM_URL, null) ?: OPENAI_URL,
             apiKey = KeystoreCipher.decrypt(prefs.getString(K_SUM_KEY, "") ?: ""),
-            model = prefs.getString(K_SUM_MODEL, null) ?: "gpt-4o-mini",
+            model = (prefs.getString(K_SUM_MODEL, null) ?: "gpt-4o-mini").let { RETIRED_MODELS[it] ?: it },
         ),
         language = prefs.getString(K_LANG, "") ?: "",
         autoProcess = prefs.getBoolean(K_AUTO, true),
@@ -72,6 +72,10 @@ class SettingsStore(context: Context) {
     companion object {
         const val OPENAI_URL = "https://api.openai.com/v1"
         const val GROQ_URL = "https://api.groq.com/openai/v1"
+        const val GROQ_TRANSCRIPTION_MODEL = "whisper-large-v3"
+        const val GROQ_SUMMARY_MODEL = "openai/gpt-oss-120b"
+
+        private val RETIRED_MODELS = mapOf("llama-3.3-70b-versatile" to GROQ_SUMMARY_MODEL)
 
         private const val K_TX_URL = "tx_url"
         private const val K_TX_KEY = "tx_key"

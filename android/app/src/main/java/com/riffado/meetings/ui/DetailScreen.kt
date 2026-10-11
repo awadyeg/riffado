@@ -196,7 +196,7 @@ private fun ProcessButtons(recording: Recording, canProcess: Boolean, onProcess:
     if (recording.segments.isEmpty()) return
     Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
         if (recording.transcript.isNullOrBlank() || recording.status == RecordingStatus.FAILED) {
-            Button(enabled = canProcess, onClick = { onProcess(false) }) {
+            Button(enabled = canProcess, onClick = { onProcess(!recording.transcript.isNullOrBlank()) }) {
                 Text(
                     stringResource(
                         if (recording.status == RecordingStatus.FAILED) R.string.action_retry else R.string.action_transcribe,

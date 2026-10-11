@@ -87,9 +87,9 @@ fun SettingsScreen(initial: AppSettings, onSave: (AppSettings) -> Unit, onBack: 
                 AssistChip(
                     onClick = {
                         txUrl = SettingsStore.GROQ_URL
-                        txModel = "whisper-large-v3"
+                        txModel = SettingsStore.GROQ_TRANSCRIPTION_MODEL
                         sumUrl = SettingsStore.GROQ_URL
-                        sumModel = "llama-3.3-70b-versatile"
+                        sumModel = SettingsStore.GROQ_SUMMARY_MODEL
                     },
                     label = { Text("Groq") },
                 )
