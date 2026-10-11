@@ -15,7 +15,7 @@ object AudioConcat {
 
     fun concat(inputs: List<File>, output: File): File {
         output.delete()
-        val muxer = MediaMuxer(output.path, MediaMuxer.OutputFormat.MUXER_OUTPUT_FORMAT_MPEG_4)
+        val muxer = MediaMuxer(output.path, MediaMuxer.OutputFormat.MUXER_OUTPUT_MPEG_4)
         val buffer = ByteBuffer.allocate(1 shl 20)
         val info = MediaCodec.BufferInfo()
         var track = -1
