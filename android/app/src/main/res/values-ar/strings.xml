@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">Riffado للاجتماعات</string>
+    <string name="app_name">Awady meetings</string>
 
     <string name="channel_recording">التسجيل</string>
     <string name="channel_processing">التفريغ والملخص</string>
