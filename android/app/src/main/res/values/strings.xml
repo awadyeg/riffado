@@ -21,6 +21,7 @@
     <string name="action_rename">Rename</string>
     <string name="action_transcribe">Transcribe and summarize</string>
     <string name="action_retry">Retry</string>
+    <string name="action_retranscribe">Re-transcribe</string>
     <string name="action_resummarize">Regenerate summary</string>
     <string name="action_save">Save</string>
     <string name="action_cancel">Cancel</string>
@@ -70,5 +71,6 @@
     <string name="speaker_rename_title">Name for Speaker %1$s</string>
     <string name="speaker_rename_hint">After naming speakers, tap Regenerate summary so the minutes use the names.</string>
     <string name="settings_preset_speakers">ElevenLabs (speakers)</string>
+    <string name="settings_preset_sarvam">Sarvam Saaras (Hindi)</string>
     <string name="settings_speakers_help">To separate speakers (Speaker 1, Speaker 2), choose ElevenLabs for transcription and paste an ElevenLabs key. Your Groq or OpenAI key moves to the Summary section.</string>
 </resources>

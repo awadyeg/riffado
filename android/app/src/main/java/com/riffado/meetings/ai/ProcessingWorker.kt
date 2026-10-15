@@ -48,10 +48,10 @@ class ProcessingWorker(context: Context, params: WorkerParameters) : CoroutineWo
                 app.recordings.update(id) { it.copy(status = RecordingStatus.TRANSCRIBING, error = null) }
                 val files = app.recordings.segmentFiles(recording).filter { it.exists() && it.length() > 0 }
                 transcript = withContext(Dispatchers.IO) {
-                    if (settings.usesElevenLabs) {
-                        transcribeWithSpeakers(id, files, settings)
-                    } else {
-                        files.map { OpenAiClient.transcribe(settings.transcription, it, settings.language) }
+                    when {
+                        settings.usesElevenLabs -> transcribeWithSpeakers(id, files, settings)
+                        settings.usesSarvam -> transcribeSarvam(files, settings)
+                        else -> files.map { OpenAiClient.transcribe(settings.transcription, it, settings.language) }
                             .filter { it.isNotBlank() }
                             .joinToString("\n\n")
                     }
@@ -111,6 +111,14 @@ class ProcessingWorker(context: Context, params: WorkerParameters) : CoroutineWo
         } finally {
             joined.delete()
         }
+    }
+
+    /** Sarvam transcribes each segment individually, then joins the results. */
+    private fun transcribeSarvam(files: List<File>, settings: AppSettings): String {
+        if (files.isEmpty()) throw IllegalStateException("Recording has no audio")
+        return files.map { SarvamClient.transcribe(settings.transcription, it, settings.language) }
+            .filter { it.isNotBlank() }
+            .joinToString("\n\n")
     }
 
     override suspend fun getForegroundInfo(): ForegroundInfo =

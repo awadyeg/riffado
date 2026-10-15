@@ -30,9 +30,17 @@ data class AppSettings(
     val usesElevenLabs: Boolean
         get() = transcription.baseUrl.contains("elevenlabs.io")
 
+    /** True when transcription goes to Sarvam AI Saaras. */
+    val usesSarvam: Boolean
+        get() = transcription.baseUrl.contains("sarvam.ai")
+
     /** Summary config with the transcription key filled in when the summary key is blank and compatible. */
     val effectiveSummary: ProviderConfig
-        get() = if (summary.apiKey.isBlank() && !usesElevenLabs) summary.copy(apiKey = transcription.apiKey) else summary
+        get() = if (summary.apiKey.isBlank() && !usesElevenLabs && !usesSarvam) {
+            summary.copy(apiKey = transcription.apiKey)
+        } else {
+            summary
+        }
 
     private fun isLocal(url: String): Boolean = url.startsWith("http://")
 }
@@ -81,6 +89,9 @@ class SettingsStore(context: Context) {
 
         const val ELEVENLABS_URL = "https://api.elevenlabs.io/v1"
         const val ELEVENLABS_MODEL = "scribe_v2"
+
+        const val SARVAM_URL = "https://api.sarvam.ai"
+        const val SARVAM_MODEL = "saaras:v4"
 
         private val RETIRED_MODELS = mapOf("llama-3.3-70b-versatile" to GROQ_SUMMARY_MODEL)
 

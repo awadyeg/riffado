@@ -311,6 +311,11 @@ private fun ProcessButtons(recording: Recording, canProcess: Boolean, onProcess:
                 )
             }
         }
+        if (!recording.transcript.isNullOrBlank() && recording.status != RecordingStatus.FAILED) {
+            OutlinedButton(enabled = canProcess, onClick = { onProcess(false) }) {
+                Text(stringResource(R.string.action_retranscribe))
+            }
+        }
         if (!recording.transcript.isNullOrBlank()) {
             OutlinedButton(enabled = canProcess, onClick = { onProcess(true) }) {
                 Text(stringResource(R.string.action_resummarize))
