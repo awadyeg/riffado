@@ -27,6 +27,7 @@ import com.riffado.meetings.ui.AppViewModel
 import com.riffado.meetings.ui.DetailScreen
 import com.riffado.meetings.ui.HomeScreen
 import com.riffado.meetings.ui.MeetingsTheme
+import com.riffado.meetings.ui.ProviderManagementScreen
 import com.riffado.meetings.ui.SettingsScreen
 
 class MainActivity : ComponentActivity() {
@@ -47,6 +48,7 @@ class MainActivity : ComponentActivity() {
 }
 
 private const val SETTINGS = "settings"
+private const val PROVIDER_MANAGEMENT = "provider_management"
 
 @Composable
 private fun App(viewModel: AppViewModel, intent: Intent) {
@@ -132,8 +134,21 @@ private fun App(viewModel: AppViewModel, intent: Intent) {
                 screen = null
             },
             onSaveCallRecording = viewModel::saveCallSettings,
+            onManageProviders = { screen = PROVIDER_MANAGEMENT },
             onBack = { screen = null },
         )
+        PROVIDER_MANAGEMENT -> {
+            val providers by viewModel.transcriptionProviders.collectAsStateWithLifecycle()
+            ProviderManagementScreen(
+                providers = providers,
+                onSave = { updated ->
+                    viewModel.saveTranscriptionProviders(updated)
+                    Toast.makeText(context, R.string.settings_saved, Toast.LENGTH_SHORT).show()
+                    screen = SETTINGS
+                },
+                onBack = { screen = SETTINGS },
+            )
+        }
         else -> {
             val recording = recordings.firstOrNull { it.id == current }
             if (recording == null) {

@@ -70,6 +70,7 @@ fun SettingsScreen(
     callRecording: CallRecordingSettings,
     onSave: (AppSettings) -> Unit,
     onSaveCallRecording: (CallRecordingSettings) -> Unit,
+    onManageProviders: () -> Unit,
     onBack: () -> Unit,
 ) {
     val context = LocalContext.current
@@ -186,7 +187,7 @@ fun SettingsScreen(
             )
             
             Button(
-                onClick = { /* Navigate to provider management - needs to be wired in MainActivity */ },
+                onClick = onManageProviders,
                 modifier = Modifier.fillMaxWidth(),
             ) {
                 Text("Manage Provider Fallback Chain")

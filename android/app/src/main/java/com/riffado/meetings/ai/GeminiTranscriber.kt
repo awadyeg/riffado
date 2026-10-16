@@ -84,7 +84,7 @@ object GeminiTranscriber {
      * 
      * @param baseUrl API base URL (e.g., https://generativelanguage.googleapis.com/v1beta)
      * @param apiKey Gemini API key
-     * @param model Model name (e.g., gemini-1.5-flash-8b)
+     * @param model Model name (e.g., gemini-3.6-flash)
      * @param audioFile Audio file to transcribe
      * @param language Optional language hint
      * @return Diarized transcript in "Speaker N: text" format

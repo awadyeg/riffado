@@ -107,7 +107,7 @@ class SettingsStore(context: Context) {
         const val MUNSIT_EN_AR_MODEL = "munsit-en-ar"
         
         const val GEMINI_URL = "https://generativelanguage.googleapis.com/v1beta"
-        const val GEMINI_MODEL = "gemini-1.5-flash-8b" // Current free-tier model with audio, Oct 2026
+        const val GEMINI_MODEL = "gemini-3.6-flash" // Current stable Flash model with audio support, Oct 2026
 
         private val RETIRED_MODELS = mapOf("llama-3.3-70b-versatile" to GROQ_SUMMARY_MODEL)
 
