@@ -56,6 +56,12 @@
     <string name="rename_title">إعادة تسمية</string>
 
     <string name="permission_needed">يلزم إذن الميكروفون للتسجيل.</string>
+    <string name="permission_microphone">الميكروفون</string>
+    <string name="permission_phone">الهاتف</string>
+    <string name="permission_contacts">جهات الاتصال</string>
+    <string name="permission_call_log">سجل المكالمات</string>
+    <string name="permission_notifications">الإشعارات</string>
+    <string name="action_open">فتح</string>
 
     <string name="import_success">تم استيراد الملف الصوتي</string>
     <string name="import_failed">فشل استيراد الملف الصوتي</string>
@@ -65,6 +71,33 @@
     <string name="call_recording_duration">%s</string>
     
     <string name="accessibility_service_description">مطلوب لتسجيل المكالمات تلقائيًا. لا يتم جمع أو استخدام أي بيانات إمكانية الوصول.</string>
+    
+    <!-- Quick record -->
+    <string name="quick_record_label">تسجيل سريع</string>
+    <string name="tile_record_label">تسجيل اجتماع</string>
+    <string name="quick_record_setup_title">إعداد التسجيل السريع</string>
+    <string name="quick_record_setup_desc">بدّل التسجيل فورًا من زر الطاقة أو الإعدادات السريعة أو الشاشة الرئيسية:</string>
+    <string name="quick_record_power_button">زر الطاقة: الإعدادات ← الميزات المتقدمة ← الزر الجانبي ← الضغط مرتين ← فتح تطبيق ← تسجيل سريع</string>
+    <string name="quick_record_qs_tile">الإعدادات السريعة: مرر لأسفل، اضغط تعديل، أضف بلاطة \"تسجيل اجتماع\"</string>
+    <string name="quick_record_shortcut">الشاشة الرئيسية: اضغط مطولاً على أيقونة التطبيق ← الاختصارات ← تسجيل سريع</string>
+    
+    <!-- Reliability -->
+    <string name="reliability_section">الثبات في الخلفية</string>
+    <string name="reliability_checklist">قائمة فحص الموثوقية</string>
+    <string name="reliability_accessibility">خدمة إمكانية الوصول</string>
+    <string name="reliability_accessibility_desc">مطلوب لتسجيل المكالمات</string>
+    <string name="reliability_battery">تحسين البطارية</string>
+    <string name="reliability_battery_desc">يجب أن يكون التطبيق غير مقيد</string>
+    <string name="reliability_permissions">الأذونات</string>
+    <string name="reliability_permissions_desc">الصوت والهاتف وجهات الاتصال وسجل المكالمات</string>
+    <string name="reliability_notifications">الإشعارات</string>
+    <string name="reliability_notifications_desc">مطلوبة للخدمة الأمامية</string>
+    <string name="reliability_status_ok">مُفعّل</string>
+    <string name="reliability_status_missing">غير مُعدّ</string>
+    <string name="battery_optimization_title">تحسين البطارية</string>
+    <string name="battery_optimization_desc">إزالة قيود البطارية حتى يتمكن التطبيق من تسجيل المكالمات في الخلفية</string>
+    <string name="battery_optimization_button">طلب بطارية غير مقيدة</string>
+    <string name="battery_samsung_hint">مستخدمو Samsung: أضف هذا التطبيق أيضًا إلى \"التطبيقات التي لا تنام أبدًا\" في الإعدادات ← البطارية ← حدود استخدام الخلفية</string>
 
     <string name="settings_title">الإعدادات</string>
     <string name="settings_presets">إعداد سريع</string>
@@ -85,4 +118,15 @@
     <string name="settings_preset_sarvam">Sarvam Saaras (هندي)</string>
     <string name="settings_preset_munsit">Munsit (عربي)</string>
     <string name="settings_speakers_help">لفصل المتحدثين (Speaker 1 و Speaker 2) اختر ElevenLabs للتفريغ وضع مفتاح ElevenLabs. مفتاح Groq أو OpenAI ينتقل إلى قسم الملخص.</string>
+    
+    <string name="settings_call_recording">تسجيلات المكالمات</string>
+    <string name="settings_call_auto_record">تسجيل المكالمات تلقائيًا</string>
+    <string name="settings_call_audio_source">مصدر الصوت</string>
+    <string name="settings_call_auto_process">التفريغ والتلخيص تلقائيًا</string>
+    <string name="settings_call_speakerphone_hint">تفعيل مكبر الصوت أثناء التسجيل</string>
+    <string name="settings_call_accessibility_service">خدمة إمكانية الوصول</string>
+    <string name="settings_call_accessibility_enabled">مُفعّل</string>
+    <string name="settings_call_accessibility_disabled">غير مُفعّل</string>
+    <string name="settings_call_permissions">الأذونات المطلوبة</string>
+    <string name="settings_call_help">فعّل خدمة إمكانية الوصول لاكتشاف بداية المكالمة. سيسجل التطبيق الصوت من الميكروفون (قد يتم تسجيل الطرفين حسب الجهاز ومصدر الصوت).</string>
 </resources>

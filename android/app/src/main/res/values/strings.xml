@@ -56,6 +56,12 @@
     <string name="rename_title">Rename</string>
 
     <string name="permission_needed">Microphone permission is required to record.</string>
+    <string name="permission_microphone">Microphone</string>
+    <string name="permission_phone">Phone</string>
+    <string name="permission_contacts">Contacts</string>
+    <string name="permission_call_log">Call log</string>
+    <string name="permission_notifications">Notifications</string>
+    <string name="action_open">Open</string>
 
     <string name="import_success">Audio imported</string>
     <string name="import_failed">Failed to import audio file</string>
@@ -65,6 +71,33 @@
     <string name="call_recording_duration">%s</string>
     
     <string name="accessibility_service_description">Required for automatic call recording. No accessibility data is collected or used beyond detecting call state.</string>
+    
+    <!-- Quick record -->
+    <string name="quick_record_label">Quick record</string>
+    <string name="tile_record_label">Record meeting</string>
+    <string name="quick_record_setup_title">Quick Record Setup</string>
+    <string name="quick_record_setup_desc">Toggle recording instantly from the power button, Quick Settings, or home screen:</string>
+    <string name="quick_record_power_button">Power button: Settings → Advanced features → Side button → Double press → Open app → Quick record</string>
+    <string name="quick_record_qs_tile">Quick Settings: Swipe down, tap Edit, add the "Record meeting" tile</string>
+    <string name="quick_record_shortcut">Home screen: Long-press app icon → Shortcuts → Quick record</string>
+    
+    <!-- Reliability -->
+    <string name="reliability_section">Reliability</string>
+    <string name="reliability_checklist">Background Reliability Checklist</string>
+    <string name="reliability_accessibility">Accessibility Service</string>
+    <string name="reliability_accessibility_desc">Required for call recording</string>
+    <string name="reliability_battery">Battery Optimization</string>
+    <string name="reliability_battery_desc">App should be unrestricted</string>
+    <string name="reliability_permissions">Permissions</string>
+    <string name="reliability_permissions_desc">Audio, phone, contacts, call log</string>
+    <string name="reliability_notifications">Notifications</string>
+    <string name="reliability_notifications_desc">Required for foreground service</string>
+    <string name="reliability_status_ok">Enabled</string>
+    <string name="reliability_status_missing">Not configured</string>
+    <string name="battery_optimization_title">Battery Optimization</string>
+    <string name="battery_optimization_desc">Remove battery restrictions so the app can record calls in the background</string>
+    <string name="battery_optimization_button">Request Unrestricted Battery</string>
+    <string name="battery_samsung_hint">Samsung users: Also add this app to \"Never sleeping apps\" in Settings → Battery → Background usage limits</string>
 
     <string name="settings_title">Settings</string>
     <string name="settings_presets">Quick setup</string>
@@ -85,4 +118,15 @@
     <string name="settings_preset_sarvam">Sarvam Saaras (Hindi)</string>
     <string name="settings_preset_munsit">Munsit (Arabic)</string>
     <string name="settings_speakers_help">To separate speakers (Speaker 1, Speaker 2), choose ElevenLabs for transcription and paste an ElevenLabs key. Your Groq or OpenAI key moves to the Summary section.</string>
+    
+    <string name="settings_call_recording">Call Recordings</string>
+    <string name="settings_call_auto_record">Auto-record calls</string>
+    <string name="settings_call_audio_source">Audio source</string>
+    <string name="settings_call_auto_process">Auto-transcribe and summarize</string>
+    <string name="settings_call_speakerphone_hint">Enable speakerphone during recording</string>
+    <string name="settings_call_accessibility_service">Accessibility Service</string>
+    <string name="settings_call_accessibility_enabled">Enabled</string>
+    <string name="settings_call_accessibility_disabled">Not enabled</string>
+    <string name="settings_call_permissions">Required permissions</string>
+    <string name="settings_call_help">Enable the Accessibility Service to detect when a call starts. The app will record audio from your microphone (both sides of the call may be recorded depending on device and audio source).</string>
 </resources>

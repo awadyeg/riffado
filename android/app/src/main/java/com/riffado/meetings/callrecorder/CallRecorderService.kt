@@ -49,7 +49,7 @@ class CallRecorderService : Service() {
             ACTION_START -> startRecording()
             ACTION_STOP -> stopRecording()
         }
-        return START_NOT_STICKY
+        return START_STICKY
     }
 
     private fun startRecording() {
@@ -68,7 +68,12 @@ class CallRecorderService : Service() {
         startTime = System.currentTimeMillis()
 
         createNotificationChannel()
-        startForeground(NOTIFICATION_ID, buildNotification())
+        
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+            startForeground(NOTIFICATION_ID, buildNotification(), ServiceInfo.FOREGROUND_SERVICE_TYPE_MICROPHONE or ServiceInfo.FOREGROUND_SERVICE_TYPE_PHONE_CALL)
+        } else {
+            startForeground(NOTIFICATION_ID, buildNotification())
+        }
 
         val audioSource = callSettings.audioSource
         val outputFile = File(filesDir, "recordings/$id-0.m4a").apply { parentFile?.mkdirs() }
@@ -93,14 +98,40 @@ class CallRecorderService : Service() {
             Log.d(TAG, "Call recording started: $id")
 
             scope.launch {
-                delay(60000) // Update notification every minute
+                delay(60000)
                 if (recorder != null) {
                     startForeground(NOTIFICATION_ID, buildNotification())
                 }
             }
+        } catch (e: IllegalStateException) {
+            Log.e(TAG, "Mic in use by another app, cannot record", e)
+            savePlaceholder(id, "Microphone in use by another app")
+            stopSelf()
         } catch (e: Exception) {
             Log.e(TAG, "Failed to start call recording", e)
+            savePlaceholder(id, "Recording failed: ${e.message}")
             stopSelf()
+        }
+    }
+
+    private fun savePlaceholder(id: String, errorMsg: String) {
+        val app = application as MeetingsApp
+        val recording = Recording(
+            id = id,
+            title = getString(R.string.call_recording_unknown),
+            titleIsDefault = true,
+            createdAt = startTime,
+            durationMs = 0,
+            status = RecordingStatus.FAILED,
+            segments = emptyList(),
+            transcript = null,
+            summary = null,
+            speakerNames = emptyMap(),
+            error = errorMsg,
+            tags = setOf("call"),
+        )
+        scope.launch {
+            app.recordings.upsert(recording)
         }
     }
 
@@ -108,9 +139,15 @@ class CallRecorderService : Service() {
         val id = recordingId ?: return
         val duration = System.currentTimeMillis() - startTime
 
+        val outputFile = File(filesDir, "recordings/$id-0.m4a")
+
         try {
             recorder?.apply {
-                stop()
+                try {
+                    stop()
+                } catch (e: IllegalStateException) {
+                    Log.w(TAG, "MediaRecorder stop failed, preserving partial file", e)
+                }
                 release()
             }
             recorder = null
@@ -120,25 +157,26 @@ class CallRecorderService : Service() {
             val contactName = phoneNumber?.let { getContactName(it) }
             val title = contactName ?: phoneNumber ?: getString(R.string.call_recording_unknown)
 
+            val hasAudio = outputFile.exists() && outputFile.length() > 0
             val recording = Recording(
                 id = id,
                 title = title,
                 titleIsDefault = contactName == null && phoneNumber == null,
                 createdAt = startTime,
                 durationMs = duration,
-                status = RecordingStatus.RECORDED,
-                segments = listOf("$id-0.m4a"),
+                status = if (hasAudio) RecordingStatus.RECORDED else RecordingStatus.FAILED,
+                segments = if (hasAudio) listOf("$id-0.m4a") else emptyList(),
                 transcript = null,
                 summary = null,
                 speakerNames = emptyMap(),
-                error = null,
+                error = if (!hasAudio) "Recording interrupted" else null,
                 tags = setOf("call"),
             )
 
             scope.launch {
                 app.recordings.upsert(recording)
                 
-                if (app.callRecordings.settings.value.autoProcess && app.settings.settings.value.canTranscribe) {
+                if (hasAudio && app.callRecordings.settings.value.autoProcess && app.settings.settings.value.canTranscribe) {
                     ProcessingWorker.enqueue(app, id, false)
                 }
             }
@@ -146,6 +184,9 @@ class CallRecorderService : Service() {
             Log.d(TAG, "Call recording saved: $id")
         } catch (e: Exception) {
             Log.e(TAG, "Failed to stop call recording", e)
+            if (outputFile.exists() && outputFile.length() > 0) {
+                savePlaceholder(id, "Partial recording saved")
+            }
         } finally {
             stopForeground(STOP_FOREGROUND_REMOVE)
             stopSelf()
