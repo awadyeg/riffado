@@ -29,13 +29,17 @@
     <string name="action_cancel">إلغاء</string>
     <string name="action_play">تشغيل</string>
     <string name="action_open_settings">فتح الإعدادات</string>
+    <string name="action_clear">مسح</string>
 
     <string name="home_title">الاجتماعات</string>
     <string name="home_empty">لا توجد تسجيلات بعد. اضغط الزر لتسجيل أول اجتماع.</string>
     <string name="home_not_configured">أضف مفتاح API في الإعدادات للحصول على التفريغ والملخص.</string>
+    <string name="search_hint">ابحث في التسجيلات…</string>
+    <string name="search_no_results">لا توجد تسجيلات مطابقة للبحث</string>
     <string name="filter_all">الكل</string>
     <string name="filter_meetings">اجتماعات</string>
     <string name="filter_calls">مكالمات</string>
+    <string name="filter_by_person">تصفية حسب الشخص…</string>
     <string name="recording_live">جاري التسجيل</string>
     <string name="recording_paused">متوقف مؤقتًا</string>
     <string name="default_title">اجتماع %1$s</string>
@@ -127,6 +131,7 @@
     <string name="settings_preset_speakers">ElevenLabs (المتحدثون)</string>
     <string name="settings_preset_sarvam">Sarvam Saaras (هندي)</string>
     <string name="settings_preset_munsit">Munsit (عربي)</string>
+    <string name="settings_preset_gemini">Gemini (مجاني)</string>
     <string name="settings_speakers_help">لفصل المتحدثين (Speaker 1 و Speaker 2) اختر ElevenLabs للتفريغ وضع مفتاح ElevenLabs. مفتاح Groq أو OpenAI ينتقل إلى قسم الملخص.</string>
     
     <string name="settings_call_recording">تسجيلات المكالمات</string>
