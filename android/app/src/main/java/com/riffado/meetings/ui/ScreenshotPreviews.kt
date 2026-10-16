@@ -112,6 +112,7 @@ private fun PreviewSettingsCallRecording() {
                 callRecording = callSettings,
                 onSave = {},
                 onSaveCallRecording = {},
+                onManageProviders = {},
                 onBack = {},
             )
         }

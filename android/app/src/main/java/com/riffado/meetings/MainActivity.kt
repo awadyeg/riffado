@@ -138,9 +138,9 @@ private fun App(viewModel: AppViewModel, intent: Intent) {
             onBack = { screen = null },
         )
         PROVIDER_MANAGEMENT -> {
-            val providers by viewModel.transcriptionProviders.collectAsStateWithLifecycle()
+            val transcriptionSettings by viewModel.transcriptionProviders.collectAsStateWithLifecycle()
             ProviderManagementScreen(
-                providers = providers,
+                settings = transcriptionSettings,
                 onSave = { updated ->
                     viewModel.saveTranscriptionProviders(updated)
                     Toast.makeText(context, R.string.settings_saved, Toast.LENGTH_SHORT).show()
