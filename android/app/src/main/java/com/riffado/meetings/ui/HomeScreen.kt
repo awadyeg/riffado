@@ -273,22 +273,6 @@ private fun PersonFilterDropdown(
         }
     }
 }
-                item {
-                    Text(
-                        stringResource(R.string.home_empty),
-                        style = MaterialTheme.typography.bodyMedium,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant,
-                        textAlign = TextAlign.Center,
-                        modifier = Modifier.fillMaxWidth().padding(top = 32.dp),
-                    )
-                }
-            }
-            items(filteredRecordings, key = { it.id }) { rec ->
-                RecordingRow(rec, live, onClick = { onOpen(rec.id) })
-            }
-        }
-    }
-}
 
 @Composable
 private fun RecorderCard(
