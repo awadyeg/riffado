@@ -112,7 +112,7 @@ fun SettingsScreen(
             FlowRow(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
                 AssistChip(
                     onClick = {
-                        if (txUrl.contains("elevenlabs.io") || txUrl.contains("sarvam.ai") || txUrl.contains("munsit.com") || txUrl.contains("faseeh.ai")) txKey = sumKey
+                        if (txUrl.contains("elevenlabs.io") || txUrl.contains("sarvam.ai") || txUrl.contains("munsit.com") || txUrl.contains("faseeh.ai") || txUrl.contains("generativelanguage.googleapis.com")) txKey = sumKey
                         txUrl = SettingsStore.OPENAI_URL
                         txModel = "whisper-1"
                         sumUrl = SettingsStore.OPENAI_URL
@@ -122,7 +122,7 @@ fun SettingsScreen(
                 )
                 AssistChip(
                     onClick = {
-                        if (txUrl.contains("elevenlabs.io") || txUrl.contains("sarvam.ai") || txUrl.contains("munsit.com") || txUrl.contains("faseeh.ai")) txKey = sumKey
+                        if (txUrl.contains("elevenlabs.io") || txUrl.contains("sarvam.ai") || txUrl.contains("munsit.com") || txUrl.contains("faseeh.ai") || txUrl.contains("generativelanguage.googleapis.com")) txKey = sumKey
                         txUrl = SettingsStore.GROQ_URL
                         txModel = SettingsStore.GROQ_TRANSCRIPTION_MODEL
                         sumUrl = SettingsStore.GROQ_URL
@@ -132,8 +132,8 @@ fun SettingsScreen(
                 )
                 AssistChip(
                     onClick = {
-                        if (!txUrl.contains("elevenlabs.io") && !txUrl.contains("sarvam.ai") && !txUrl.contains("munsit.com") && !txUrl.contains("faseeh.ai") && sumKey.isBlank() && sumUrl == txUrl) sumKey = txKey
-                        if (!txUrl.contains("elevenlabs.io") && !txUrl.contains("sarvam.ai") && !txUrl.contains("munsit.com") && !txUrl.contains("faseeh.ai")) txKey = ""
+                        if (!txUrl.contains("elevenlabs.io") && !txUrl.contains("sarvam.ai") && !txUrl.contains("munsit.com") && !txUrl.contains("faseeh.ai") && !txUrl.contains("generativelanguage.googleapis.com") && sumKey.isBlank() && sumUrl == txUrl) sumKey = txKey
+                        if (!txUrl.contains("elevenlabs.io") && !txUrl.contains("sarvam.ai") && !txUrl.contains("munsit.com") && !txUrl.contains("faseeh.ai") && !txUrl.contains("generativelanguage.googleapis.com")) txKey = ""
                         txUrl = SettingsStore.ELEVENLABS_URL
                         txModel = SettingsStore.ELEVENLABS_MODEL
                     },
@@ -164,6 +164,19 @@ fun SettingsScreen(
                         }
                     },
                     label = { Text(stringResource(R.string.settings_preset_munsit)) },
+                )
+                AssistChip(
+                    onClick = {
+                        if (!txUrl.contains("generativelanguage.googleapis.com") && sumKey.isBlank() && sumUrl == SettingsStore.GROQ_URL) sumKey = txKey
+                        if (!txUrl.contains("generativelanguage.googleapis.com")) txKey = ""
+                        txUrl = SettingsStore.GEMINI_URL
+                        txModel = SettingsStore.GEMINI_MODEL
+                        if (sumUrl != SettingsStore.GROQ_URL) {
+                            sumUrl = SettingsStore.GROQ_URL
+                            sumModel = SettingsStore.GROQ_SUMMARY_MODEL
+                        }
+                    },
+                    label = { Text(stringResource(R.string.settings_preset_gemini)) },
                 )
             }
             Text(

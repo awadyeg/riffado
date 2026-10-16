@@ -52,6 +52,7 @@ class ProcessingWorker(context: Context, params: WorkerParameters) : CoroutineWo
                         settings.usesElevenLabs -> transcribeWithSpeakers(id, files, settings)
                         settings.usesSarvam -> transcribeSarvam(files, settings)
                         settings.usesMunsit -> transcribeMunsit(files, settings)
+                        settings.usesGemini -> transcribeGemini(files, settings)
                         else -> files.map { OpenAiClient.transcribe(settings.transcription, it, settings.language) }
                             .filter { it.isNotBlank() }
                             .joinToString("\n\n")
@@ -126,6 +127,22 @@ class ProcessingWorker(context: Context, params: WorkerParameters) : CoroutineWo
     private fun transcribeMunsit(files: List<File>, settings: AppSettings): String {
         if (files.isEmpty()) throw IllegalStateException("Recording has no audio")
         return files.map { MunsitClient.transcribe(settings.transcription, it, settings.language) }
+            .filter { it.isNotBlank() }
+            .joinToString("\n\n")
+    }
+    
+    /** Gemini transcribes with diarization using inline audio API. Each segment individually, then joins. */
+    private suspend fun transcribeGemini(files: List<File>, settings: AppSettings): String {
+        if (files.isEmpty()) throw IllegalStateException("Recording has no audio")
+        return files.map { file ->
+            GeminiTranscriber.transcribe(
+                baseUrl = settings.transcription.baseUrl,
+                apiKey = settings.transcription.apiKey,
+                model = settings.transcription.model,
+                audioFile = file,
+                language = settings.language,
+            )
+        }
             .filter { it.isNotBlank() }
             .joinToString("\n\n")
     }

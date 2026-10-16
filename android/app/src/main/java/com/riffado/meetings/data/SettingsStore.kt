@@ -37,10 +37,14 @@ data class AppSettings(
     /** True when transcription goes to Munsit with diarization. */
     val usesMunsit: Boolean
         get() = transcription.baseUrl.contains("munsit.com") || transcription.baseUrl.contains("faseeh.ai")
+    
+    /** True when transcription goes to Google Gemini. */
+    val usesGemini: Boolean
+        get() = transcription.baseUrl.contains("generativelanguage.googleapis.com")
 
     /** Summary config with the transcription key filled in when the summary key is blank and compatible. */
     val effectiveSummary: ProviderConfig
-        get() = if (summary.apiKey.isBlank() && !usesElevenLabs && !usesSarvam && !usesMunsit) {
+        get() = if (summary.apiKey.isBlank() && !usesElevenLabs && !usesSarvam && !usesMunsit && !usesGemini) {
             summary.copy(apiKey = transcription.apiKey)
         } else {
             summary
@@ -101,6 +105,9 @@ class SettingsStore(context: Context) {
         const val MUNSIT_UAE_URL = "https://ae.api.faseeh.ai/api/v1"
         const val MUNSIT_MODEL = "munsit"
         const val MUNSIT_EN_AR_MODEL = "munsit-en-ar"
+        
+        const val GEMINI_URL = "https://generativelanguage.googleapis.com/v1beta"
+        const val GEMINI_MODEL = "gemini-2.0-flash-exp"
 
         private val RETIRED_MODELS = mapOf("llama-3.3-70b-versatile" to GROQ_SUMMARY_MODEL)
 
