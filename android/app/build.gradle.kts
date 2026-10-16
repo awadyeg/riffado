@@ -42,6 +42,13 @@ android {
             )
         }
     }
+    
+    applicationVariants.all {
+        outputs.all {
+            (this as com.android.build.gradle.internal.api.BaseVariantOutputImpl).outputFileName = 
+                "riffado-meetings-${buildType.name}.apk"
+        }
+    }
 
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_17
