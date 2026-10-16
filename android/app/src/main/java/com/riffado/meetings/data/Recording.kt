@@ -31,6 +31,19 @@ data class Recording(
     val speakerNames: Map<String, String> = emptyMap(),
     /** Tags for categorization (e.g., "call" for call recordings). */
     val tags: Set<String> = emptySet(),
+    /** Phone number for call recordings (null for meetings). */
+    val callNumber: String? = null,
+    /** Contact name for call recordings (null if no contact match). */
+    val callContactName: String? = null,
 ) {
     val isCall: Boolean get() = "call" in tags
+    
+    /** Returns the best display name for a call: contact name, phone number, or generic fallback. */
+    val displayName: String
+        get() = when {
+            !isCall -> title
+            !callContactName.isNullOrBlank() -> callContactName
+            !callNumber.isNullOrBlank() -> callNumber
+            else -> title
+        }
 }

@@ -178,10 +178,17 @@ class CallRecorderService : Service() {
             recorder = null
 
             val app = application as MeetingsApp
-            val phoneNumber = getPhoneNumber()
-            val contactName = phoneNumber?.let { getContactName(it) }
-            val title = contactName ?: phoneNumber ?: getString(R.string.call_recording_unknown)
-
+            
+            // Resolve call participant info (number and contact name)
+            val (phoneNumber, contactName) = CallParticipantResolver.resolveCallParticipant(this, startTime)
+            
+            // Determine title: contact name, phone number, or fallback
+            val title = when {
+                !contactName.isNullOrBlank() -> contactName
+                !phoneNumber.isNullOrBlank() -> phoneNumber
+                else -> getString(R.string.call_recording_unknown)
+            }
+            
             val hasAudio = outputFile.exists() && outputFile.length() > 0
             val recording = Recording(
                 id = id,
@@ -196,6 +203,8 @@ class CallRecorderService : Service() {
                 speakerNames = emptyMap(),
                 error = if (!hasAudio) "Recording interrupted" else null,
                 tags = setOf("call"),
+                callNumber = phoneNumber,
+                callContactName = contactName,
             )
 
             scope.launch {
@@ -206,7 +215,7 @@ class CallRecorderService : Service() {
                 }
             }
 
-            Log.d(TAG, "Call recording saved: $id")
+            CallRecorderDiagnostics.log(this, "Call recording saved: $id (contact: ${contactName ?: "none"}, number: ${phoneNumber ?: "none"})")
         } catch (e: Exception) {
             Log.e(TAG, "Failed to stop call recording", e)
             if (outputFile.exists() && outputFile.length() > 0) {
@@ -216,32 +225,6 @@ class CallRecorderService : Service() {
             stopForeground(STOP_FOREGROUND_REMOVE)
             stopSelf()
         }
-    }
-
-    private fun getPhoneNumber(): String? {
-        if (ContextCompat.checkSelfPermission(this, Manifest.permission.READ_CALL_LOG) != PackageManager.PERMISSION_GRANTED) {
-            return null
-        }
-        
-        val telephonyManager = getSystemService<TelephonyManager>()
-        return null // Simplified - real implementation would query call log
-    }
-
-    private fun getContactName(phoneNumber: String): String? {
-        if (ContextCompat.checkSelfPermission(this, Manifest.permission.READ_CONTACTS) != PackageManager.PERMISSION_GRANTED) {
-            return null
-        }
-
-        val uri = ContactsContract.PhoneLookup.CONTENT_FILTER_URI.buildUpon()
-            .appendPath(phoneNumber)
-            .build()
-
-        contentResolver.query(uri, arrayOf(ContactsContract.PhoneLookup.DISPLAY_NAME), null, null, null)?.use { cursor ->
-            if (cursor.moveToFirst()) {
-                return cursor.getString(0)
-            }
-        }
-        return null
     }
 
     private fun buildNotification(): android.app.Notification {

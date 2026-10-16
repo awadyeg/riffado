@@ -19,15 +19,20 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Call
+import androidx.compose.material.icons.filled.Clear
 import androidx.compose.material.icons.filled.Mic
 import androidx.compose.material.icons.filled.Pause
 import androidx.compose.material.icons.filled.PlayArrow
+import androidx.compose.material.icons.filled.Search
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material.icons.filled.Stop
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.ExposedDropdownMenuBox
+import androidx.compose.material3.ExposedDropdownMenuDefaults
 import androidx.compose.material3.FilterChip
 import androidx.compose.material3.FilledIconButton
 import androidx.compose.material3.Icon
@@ -35,6 +40,7 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.IconButtonDefaults
 import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
@@ -42,6 +48,7 @@ import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
@@ -70,12 +77,29 @@ fun HomeScreen(
     onSettings: () -> Unit,
 ) {
     var filter by rememberSaveable { mutableStateOf("all") }
+    var searchQuery by rememberSaveable { mutableStateOf("") }
+    var selectedPerson by rememberSaveable { mutableStateOf<String?>(null) }
     
-    val filteredRecordings = when (filter) {
-        "meetings" -> recordings.filter { !it.isCall }
-        "calls" -> recordings.filter { it.isCall }
-        else -> recordings
-    }
+    // Extract people from recordings for the person filter
+    val people = remember(recordings) { RecordingSearch.extractPeople(recordings) }
+    
+    // Apply filters in order: type filter -> person filter -> search
+    val filteredRecordings = recordings
+        .let { list ->
+            when (filter) {
+                "meetings" -> list.filter { !it.isCall }
+                "calls" -> list.filter { it.isCall }
+                else -> list
+            }
+        }
+        .let { list ->
+            selectedPerson?.let { person ->
+                RecordingSearch.filterByPerson(list, person)
+            } ?: list
+        }
+        .let { list ->
+            if (searchQuery.isBlank()) list else RecordingSearch.search(list, searchQuery)
+        }
     
     Scaffold(
         topBar = {
@@ -104,6 +128,28 @@ fun HomeScreen(
                 }
             }
             
+            // Search bar
+            item {
+                OutlinedTextField(
+                    value = searchQuery,
+                    onValueChange = { searchQuery = it },
+                    modifier = Modifier.fillMaxWidth(),
+                    placeholder = { Text(stringResource(R.string.search_hint)) },
+                    leadingIcon = {
+                        Icon(Icons.Filled.Search, contentDescription = null)
+                    },
+                    trailingIcon = {
+                        if (searchQuery.isNotEmpty()) {
+                            IconButton(onClick = { searchQuery = "" }) {
+                                Icon(Icons.Filled.Clear, contentDescription = stringResource(R.string.action_clear))
+                            }
+                        }
+                    },
+                    singleLine = true,
+                )
+            }
+            
+            // Filter chips
             item {
                 FlowRow(
                     horizontalArrangement = Arrangement.spacedBy(8.dp),
@@ -134,6 +180,17 @@ fun HomeScreen(
                 }
             }
             
+            // Person filter dropdown
+            if (people.isNotEmpty()) {
+                item {
+                    PersonFilterDropdown(
+                        people = people,
+                        selectedPerson = selectedPerson,
+                        onSelectPerson = { selectedPerson = it },
+                    )
+                }
+            }
+            
             if (!configured) {
                 item {
                     Card(
@@ -148,6 +205,74 @@ fun HomeScreen(
                 }
             }
             if (filteredRecordings.isEmpty()) {
+                item {
+                    Text(
+                        if (searchQuery.isNotEmpty() || selectedPerson != null) {
+                            stringResource(R.string.search_no_results)
+                        } else {
+                            stringResource(R.string.home_empty)
+                        },
+                        style = MaterialTheme.typography.bodyMedium,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                        textAlign = TextAlign.Center,
+                        modifier = Modifier.fillMaxWidth().padding(top = 32.dp),
+                    )
+                }
+            }
+            items(filteredRecordings, key = { it.id }) { rec ->
+                RecordingRow(rec, live, onClick = { onOpen(rec.id) })
+            }
+        }
+    }
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+private fun PersonFilterDropdown(
+    people: List<String>,
+    selectedPerson: String?,
+    onSelectPerson: (String?) -> Unit,
+) {
+    var expanded by remember { mutableStateOf(false) }
+    
+    ExposedDropdownMenuBox(
+        expanded = expanded,
+        onExpandedChange = { expanded = it },
+    ) {
+        OutlinedTextField(
+            value = selectedPerson ?: "",
+            onValueChange = {},
+            readOnly = true,
+            modifier = Modifier.fillMaxWidth().menuAnchor(),
+            placeholder = { Text(stringResource(R.string.filter_by_person)) },
+            trailingIcon = {
+                Row {
+                    if (selectedPerson != null) {
+                        IconButton(onClick = { onSelectPerson(null) }) {
+                            Icon(Icons.Filled.Clear, contentDescription = stringResource(R.string.action_clear))
+                        }
+                    }
+                    ExposedDropdownMenuDefaults.TrailingIcon(expanded = expanded)
+                }
+            },
+            colors = ExposedDropdownMenuDefaults.outlinedTextFieldColors(),
+        )
+        ExposedDropdownMenu(
+            expanded = expanded,
+            onDismissRequest = { expanded = false },
+        ) {
+            people.forEach { person ->
+                DropdownMenuItem(
+                    text = { Text(person) },
+                    onClick = {
+                        onSelectPerson(person)
+                        expanded = false
+                    },
+                )
+            }
+        }
+    }
+}
                 item {
                     Text(
                         stringResource(R.string.home_empty),
@@ -251,12 +376,22 @@ private fun RecordingRow(rec: Recording, live: LiveRecording, onClick: () -> Uni
                 )
             }
             Column(Modifier.weight(1f)) {
+                // Show display name (contact name or number for calls, title for meetings)
                 Text(
-                    rec.title,
+                    rec.displayName,
                     style = MaterialTheme.typography.titleMedium,
                     maxLines = 2,
                     overflow = TextOverflow.Ellipsis,
                 )
+                // For calls with contact name, show number as subtitle
+                if (rec.isCall && rec.callContactName != null && rec.callNumber != null) {
+                    Text(
+                        rec.callNumber,
+                        style = MaterialTheme.typography.bodySmall,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                        maxLines = 1,
+                    )
+                }
                 Text(
                     "${formatDate(rec.createdAt)} · ${formatDuration(if (isLive) live.elapsedMs else rec.durationMs)}",
                     style = MaterialTheme.typography.bodySmall,
