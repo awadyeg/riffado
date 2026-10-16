@@ -60,6 +60,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.media3.common.MediaItem
@@ -92,8 +93,19 @@ fun DetailScreen(
 
     Scaffold(
         topBar = {
+            val titleDirection = TextDirectionDetector.detectDirection(recording.title)
             TopAppBar(
-                title = { Text(recording.title, maxLines = 1, overflow = TextOverflow.Ellipsis) },
+                title = { 
+                    Text(
+                        recording.title,
+                        maxLines = 1,
+                        overflow = TextOverflow.Ellipsis,
+                        style = MaterialTheme.typography.titleLarge.copy(
+                            textDirection = titleDirection,
+                            textAlign = androidx.compose.ui.text.style.TextAlign.Start,
+                        ),
+                    )
+                },
                 navigationIcon = {
                     IconButton(onClick = onBack) {
                         Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = stringResource(R.string.action_back))
@@ -270,16 +282,33 @@ private fun TranscriptView(transcript: String, names: Map<String, String>) {
     SelectionContainer {
         Column(verticalArrangement = Arrangement.spacedBy(10.dp)) {
             turns.forEach { turn ->
+                // Skip empty or punctuation-only utterances
+                val cleanText = turn.text.trim()
+                if (cleanText.isEmpty() || cleanText == ".") return@forEach
+                
+                val textDirection = TextDirectionDetector.detectDirection(cleanText)
+                
                 Column {
                     if (turn.speaker != null) {
+                        val speakerLabel = Speakers.label(turn.speaker, names)
+                        val speakerDirection = TextDirectionDetector.detectDirection(speakerLabel)
                         Text(
-                            Speakers.label(turn.speaker, names),
-                            style = MaterialTheme.typography.labelLarge,
-                            fontWeight = FontWeight.SemiBold,
+                            speakerLabel,
+                            style = MaterialTheme.typography.labelLarge.copy(
+                                fontWeight = FontWeight.SemiBold,
+                                textDirection = speakerDirection,
+                                textAlign = androidx.compose.ui.text.style.TextAlign.Start,
+                            ),
                             color = speakerColor(turn.speaker),
                         )
                     }
-                    Text(turn.text, style = MaterialTheme.typography.bodyMedium)
+                    Text(
+                        cleanText,
+                        style = MaterialTheme.typography.bodyMedium.copy(
+                            textDirection = textDirection,
+                            textAlign = androidx.compose.ui.text.style.TextAlign.Start,
+                        ),
+                    )
                 }
             }
         }
