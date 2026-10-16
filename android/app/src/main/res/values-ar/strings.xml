@@ -33,6 +33,9 @@
     <string name="home_title">الاجتماعات</string>
     <string name="home_empty">لا توجد تسجيلات بعد. اضغط الزر لتسجيل أول اجتماع.</string>
     <string name="home_not_configured">أضف مفتاح API في الإعدادات للحصول على التفريغ والملخص.</string>
+    <string name="filter_all">الكل</string>
+    <string name="filter_meetings">اجتماعات</string>
+    <string name="filter_calls">مكالمات</string>
     <string name="recording_live">جاري التسجيل</string>
     <string name="recording_paused">متوقف مؤقتًا</string>
     <string name="default_title">اجتماع %1$s</string>

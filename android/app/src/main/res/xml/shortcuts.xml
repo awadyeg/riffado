@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<shortcuts xmlns:android="http://schemas.android.com/apk/res/android">
+    <shortcut
+        android:shortcutId="quick_record"
+        android:enabled="true"
+        android:icon="@drawable/ic_stat_mic"
+        android:shortcutShortLabel="@string/quick_record_label"
+        android:shortcutLongLabel="@string/quick_record_label">
+        <intent
+            android:action="android.intent.action.MAIN"
+            android:targetPackage="com.riffado.meetings"
+            android:targetClass="com.riffado.meetings.QuickRecordActivity" />
+        <categories android:name="android.shortcut.conversation" />
+    </shortcut>
+</shortcuts>

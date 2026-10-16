@@ -33,6 +33,9 @@
     <string name="home_title">Meetings</string>
     <string name="home_empty">No recordings yet. Tap the button to record your first meeting.</string>
     <string name="home_not_configured">Add an API key in settings to get transcripts and summaries.</string>
+    <string name="filter_all">All</string>
+    <string name="filter_meetings">Meetings</string>
+    <string name="filter_calls">Calls</string>
     <string name="recording_live">Recording</string>
     <string name="recording_paused">Paused</string>
     <string name="default_title">Meeting %1$s</string>
