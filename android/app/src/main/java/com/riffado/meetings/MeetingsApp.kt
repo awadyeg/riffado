@@ -34,6 +34,9 @@ class MeetingsApp : Application() {
         transcriptionProviders = TranscriptionStore(this, settings)
         createChannels()
         appScope.launch { recordings.recoverInterrupted(RecorderState.live.value.recordingId) }
+        
+        // Schedule daily provider recovery checks
+        com.riffado.meetings.ai.ProviderRecoveryWorker.schedule(this)
     }
 
     private fun createChannels() {
