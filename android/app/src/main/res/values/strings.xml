@@ -4,6 +4,7 @@
 
     <string name="channel_recording">Recording</string>
     <string name="channel_processing">Transcription and summary</string>
+    <string name="channel_call_recording">Call recording</string>
     <string name="notif_recording">Recording meeting</string>
     <string name="notif_paused">Recording paused</string>
     <string name="notif_processing">Processing %1$s</string>
@@ -58,6 +59,12 @@
 
     <string name="import_success">Audio imported</string>
     <string name="import_failed">Failed to import audio file</string>
+
+    <string name="call_recording_unknown">Call</string>
+    <string name="call_recording_active">Recording call</string>
+    <string name="call_recording_duration">%s</string>
+    
+    <string name="accessibility_service_description">Required for automatic call recording. No accessibility data is collected or used beyond detecting call state.</string>
 
     <string name="settings_title">Settings</string>
     <string name="settings_presets">Quick setup</string>

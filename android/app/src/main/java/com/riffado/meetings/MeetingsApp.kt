@@ -4,6 +4,7 @@ import android.app.Application
 import android.app.NotificationChannel
 import android.app.NotificationManager
 import androidx.core.content.getSystemService
+import com.riffado.meetings.data.CallRecordingStore
 import com.riffado.meetings.data.RecordingStore
 import com.riffado.meetings.data.SettingsStore
 import com.riffado.meetings.recording.RecorderState
@@ -16,6 +17,8 @@ class MeetingsApp : Application() {
         private set
     lateinit var settings: SettingsStore
         private set
+    lateinit var callRecordings: CallRecordingStore
+        private set
 
     val appScope = CoroutineScope(SupervisorJob())
 
@@ -24,6 +27,7 @@ class MeetingsApp : Application() {
         instance = this
         recordings = RecordingStore(this)
         settings = SettingsStore(this)
+        callRecordings = CallRecordingStore(this)
         createChannels()
         appScope.launch { recordings.recoverInterrupted(RecorderState.live.value.recordingId) }
     }

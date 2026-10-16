@@ -4,6 +4,7 @@
 
     <string name="channel_recording">التسجيل</string>
     <string name="channel_processing">التفريغ والملخص</string>
+    <string name="channel_call_recording">تسجيل المكالمات</string>
     <string name="notif_recording">جاري تسجيل الاجتماع</string>
     <string name="notif_paused">التسجيل متوقف مؤقتًا</string>
     <string name="notif_processing">جاري معالجة %1$s</string>
@@ -58,6 +59,12 @@
 
     <string name="import_success">تم استيراد الملف الصوتي</string>
     <string name="import_failed">فشل استيراد الملف الصوتي</string>
+
+    <string name="call_recording_unknown">مكالمة</string>
+    <string name="call_recording_active">جاري تسجيل المكالمة</string>
+    <string name="call_recording_duration">%s</string>
+    
+    <string name="accessibility_service_description">مطلوب لتسجيل المكالمات تلقائيًا. لا يتم جمع أو استخدام أي بيانات إمكانية الوصول.</string>
 
     <string name="settings_title">الإعدادات</string>
     <string name="settings_presets">إعداد سريع</string>
