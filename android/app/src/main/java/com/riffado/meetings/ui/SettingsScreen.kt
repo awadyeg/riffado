@@ -184,6 +184,13 @@ fun SettingsScreen(
                 style = MaterialTheme.typography.bodySmall,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
             )
+            
+            Button(
+                onClick = { /* Navigate to provider management - needs to be wired in MainActivity */ },
+                modifier = Modifier.fillMaxWidth(),
+            ) {
+                Text("Manage Provider Fallback Chain")
+            }
 
             HorizontalDivider()
             Text(stringResource(R.string.settings_call_recording), style = MaterialTheme.typography.titleMedium)

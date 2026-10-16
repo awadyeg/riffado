@@ -22,6 +22,7 @@ class AppViewModel(application: Application) : AndroidViewModel(application) {
     val settings = app.settings.settings
     val live = RecorderState.live
     val callSettings = app.callRecordings.settings
+    val transcriptionProviders = app.transcriptionProviders.settings
     
     init {
         // Backfill call participant info for existing recordings on app start
@@ -72,6 +73,9 @@ class AppViewModel(application: Application) : AndroidViewModel(application) {
     }
 
     fun saveSettings(value: AppSettings) = app.settings.save(value)
+    
+    fun saveTranscriptionProviders(value: com.riffado.meetings.data.TranscriptionSettings) = 
+        app.transcriptionProviders.save(value)
 
     fun segmentPaths(id: String): List<String> =
         app.recordings.get(id)?.let { rec -> app.recordings.segmentFiles(rec).map { it.absolutePath } }
