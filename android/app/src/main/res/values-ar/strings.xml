@@ -1,0 +1,147 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Awady meetings</string>
+
+    <string name="channel_recording">التسجيل</string>
+    <string name="channel_processing">التفريغ والملخص</string>
+    <string name="channel_call_recording">تسجيل المكالمات</string>
+    <string name="notif_recording">جاري تسجيل الاجتماع</string>
+    <string name="notif_paused">التسجيل متوقف مؤقتًا</string>
+    <string name="notif_processing">جاري معالجة %1$s</string>
+    <string name="notif_done">الملخص جاهز: %1$s</string>
+    <string name="notif_failed">فشلت المعالجة: %1$s</string>
+
+    <string name="action_pause">إيقاف مؤقت</string>
+    <string name="action_resume">استكمال</string>
+    <string name="action_stop">إنهاء</string>
+    <string name="action_record">ابدأ التسجيل</string>
+    <string name="action_import">استيراد ملف صوت</string>
+    <string name="action_settings">الإعدادات</string>
+    <string name="action_back">رجوع</string>
+    <string name="action_delete">حذف</string>
+    <string name="action_share">مشاركة</string>
+    <string name="action_rename">إعادة تسمية</string>
+    <string name="action_transcribe">تفريغ وتلخيص</string>
+    <string name="action_retry">إعادة المحاولة</string>
+    <string name="action_retranscribe">إعادة التفريغ</string>
+    <string name="action_resummarize">إعادة إنشاء الملخص</string>
+    <string name="action_save">حفظ</string>
+    <string name="action_cancel">إلغاء</string>
+    <string name="action_play">تشغيل</string>
+    <string name="action_open_settings">فتح الإعدادات</string>
+    <string name="action_clear">مسح</string>
+
+    <string name="home_title">الاجتماعات</string>
+    <string name="home_empty">لا توجد تسجيلات بعد. اضغط الزر لتسجيل أول اجتماع.</string>
+    <string name="home_not_configured">أضف مفتاح API في الإعدادات للحصول على التفريغ والملخص.</string>
+    <string name="search_hint">ابحث في التسجيلات…</string>
+    <string name="search_no_results">لا توجد تسجيلات مطابقة للبحث</string>
+    <string name="filter_all">الكل</string>
+    <string name="filter_meetings">اجتماعات</string>
+    <string name="filter_calls">مكالمات</string>
+    <string name="filter_by_person">تصفية حسب الشخص…</string>
+    <string name="recording_live">جاري التسجيل</string>
+    <string name="recording_paused">متوقف مؤقتًا</string>
+    <string name="default_title">اجتماع %1$s</string>
+    <string name="part_of">جزء %1$d من %2$d</string>
+
+    <string name="status_recording">جاري التسجيل</string>
+    <string name="status_recorded">لم يتم التفريغ</string>
+    <string name="status_queued">في الانتظار</string>
+    <string name="status_transcribing">جاري التفريغ…</string>
+    <string name="status_summarizing">جاري التلخيص…</string>
+    <string name="status_done">جاهز</string>
+    <string name="status_failed">فشل</string>
+    <string name="status_interrupted">انقطع</string>
+
+    <string name="tab_summary">الملخص</string>
+    <string name="tab_transcript">النص</string>
+    <string name="summary_empty">لا يوجد ملخص بعد.</string>
+    <string name="transcript_empty">لا يوجد نص بعد.</string>
+    <string name="delete_confirm_title">حذف التسجيل؟</string>
+    <string name="delete_confirm_body">سيتم حذف الصوت والنص والملخص من هذا الهاتف.</string>
+    <string name="rename_title">إعادة تسمية</string>
+
+    <string name="permission_needed">يلزم إذن الميكروفون للتسجيل.</string>
+    <string name="permission_microphone">الميكروفون</string>
+    <string name="permission_phone">الهاتف</string>
+    <string name="permission_contacts">جهات الاتصال</string>
+    <string name="permission_call_log">سجل المكالمات</string>
+    <string name="permission_notifications">الإشعارات</string>
+    <string name="action_open">فتح</string>
+
+    <string name="import_success">تم استيراد الملف الصوتي</string>
+    <string name="import_failed">فشل استيراد الملف الصوتي</string>
+
+    <string name="call_recording_unknown">مكالمة</string>
+    <string name="call_recording_active">جاري تسجيل المكالمة</string>
+    <string name="call_recording_duration">%s</string>
+    
+    <string name="accessibility_service_description">مطلوب لتسجيل المكالمات تلقائيًا. لا يتم جمع أو استخدام أي بيانات إمكانية الوصول.</string>
+    
+    <!-- Quick record -->
+    <string name="quick_record_label">تسجيل سريع</string>
+    <string name="tile_record_label">تسجيل اجتماع</string>
+    <string name="quick_record_setup_title">إعداد التسجيل السريع</string>
+    <string name="quick_record_setup_desc">بدّل التسجيل فورًا من زر الطاقة أو الإعدادات السريعة أو الشاشة الرئيسية:</string>
+    <string name="quick_record_power_button">زر الطاقة: الإعدادات ← الميزات المتقدمة ← الزر الجانبي ← الضغط مرتين ← فتح تطبيق ← تسجيل سريع</string>
+    <string name="quick_record_qs_tile">الإعدادات السريعة: مرر لأسفل، اضغط تعديل، أضف بلاطة \"تسجيل اجتماع\"</string>
+    <string name="quick_record_shortcut">الشاشة الرئيسية: اضغط مطولاً على أيقونة التطبيق ← الاختصارات ← تسجيل سريع</string>
+    
+    <!-- Reliability -->
+    <string name="reliability_section">الثبات في الخلفية</string>
+    <string name="reliability_checklist">قائمة فحص الموثوقية</string>
+    <string name="reliability_accessibility">خدمة إمكانية الوصول</string>
+    <string name="reliability_accessibility_desc">مطلوب لتسجيل المكالمات</string>
+    <string name="reliability_battery">تحسين البطارية</string>
+    <string name="reliability_battery_desc">يجب أن يكون التطبيق غير مقيد</string>
+    <string name="reliability_permissions">الأذونات</string>
+    <string name="reliability_permissions_desc">الصوت والهاتف وجهات الاتصال وسجل المكالمات</string>
+    <string name="reliability_notifications">الإشعارات</string>
+    <string name="reliability_notifications_desc">مطلوبة للخدمة الأمامية</string>
+    <string name="reliability_status_ok">مُفعّل</string>
+    <string name="reliability_status_missing">غير مُعدّ</string>
+    <string name="battery_optimization_title">تحسين البطارية</string>
+    <string name="battery_optimization_desc">إزالة قيود البطارية حتى يتمكن التطبيق من تسجيل المكالمات في الخلفية</string>
+    <string name="battery_optimization_button">طلب بطارية غير مقيدة</string>
+    <string name="battery_samsung_hint">مستخدمو Samsung: أضف هذا التطبيق أيضًا إلى \"التطبيقات التي لا تنام أبدًا\" في الإعدادات ← البطارية ← حدود استخدام الخلفية</string>
+
+    <string name="diagnostics_title">سجل التشخيص</string>
+    <string name="diagnostics_clear">مسح السجل</string>
+    <string name="diagnostics_test">اختبار المسجل (5 ث)</string>
+    <string name="diagnostics_empty">لا توجد أحداث تشخيصية بعد. قم بإجراء مكالمة تجريبية أو استخدم زر الاختبار.</string>
+    <string name="diagnostics_test_start">بدأ التسجيل التجريبي</string>
+    <string name="diagnostics_test_stop">توقف التسجيل التجريبي</string>
+
+    <string name="settings_title">الإعدادات</string>
+    <string name="settings_presets">إعداد سريع</string>
+    <string name="settings_transcription">التفريغ</string>
+    <string name="settings_summary">الملخص</string>
+    <string name="settings_base_url">عنوان API</string>
+    <string name="settings_api_key">مفتاح API</string>
+    <string name="settings_api_key_summary_hint">اتركه فارغًا لاستخدام مفتاح التفريغ (إلا مع ElevenLabs)</string>
+    <string name="settings_model">النموذج</string>
+    <string name="settings_language">رمز اللغة (اختياري، مثل ar أو en)</string>
+    <string name="settings_auto">التفريغ والتلخيص تلقائيًا بعد انتهاء التسجيل</string>
+    <string name="settings_saved">تم حفظ الإعدادات</string>
+    <string name="settings_privacy">التسجيلات تبقى على هذا الهاتف. يتم إرسال الصوت والنص فقط إلى مقدمي الخدمة الذين تحددهم هنا. مفاتيح API مشفرة باستخدام Android Keystore.</string>
+    <string name="speakers_title">المتحدثون (اضغط لتغيير الاسم)</string>
+    <string name="speaker_rename_title">اسم المتحدث %1$s</string>
+    <string name="speaker_rename_hint">بعد تسمية المتحدثين اضغط \"إعادة إنشاء الملخص\" ليستخدم الملخص الأسماء.</string>
+    <string name="settings_preset_speakers">ElevenLabs (المتحدثون)</string>
+    <string name="settings_preset_sarvam">Sarvam Saaras (هندي)</string>
+    <string name="settings_preset_munsit">Munsit (عربي)</string>
+    <string name="settings_preset_gemini">Gemini (مجاني)</string>
+    <string name="settings_speakers_help">لفصل المتحدثين (Speaker 1 و Speaker 2) اختر ElevenLabs للتفريغ وضع مفتاح ElevenLabs. مفتاح Groq أو OpenAI ينتقل إلى قسم الملخص.</string>
+    
+    <string name="settings_call_recording">تسجيلات المكالمات</string>
+    <string name="settings_call_auto_record">تسجيل المكالمات تلقائيًا</string>
+    <string name="settings_call_audio_source">مصدر الصوت</string>
+    <string name="settings_call_auto_process">التفريغ والتلخيص تلقائيًا</string>
+    <string name="settings_call_speakerphone_hint">تفعيل مكبر الصوت أثناء التسجيل</string>
+    <string name="settings_call_accessibility_service">خدمة إمكانية الوصول</string>
+    <string name="settings_call_accessibility_enabled">مُفعّل</string>
+    <string name="settings_call_accessibility_disabled">غير مُفعّل</string>
+    <string name="settings_call_permissions">الأذونات المطلوبة</string>
+    <string name="settings_call_help">فعّل خدمة إمكانية الوصول لاكتشاف بداية المكالمة. سيسجل التطبيق الصوت من الميكروفون (قد يتم تسجيل الطرفين حسب الجهاز ومصدر الصوت).</string>
+</resources>
