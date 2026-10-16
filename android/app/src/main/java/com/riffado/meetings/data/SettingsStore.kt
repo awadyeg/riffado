@@ -34,9 +34,13 @@ data class AppSettings(
     val usesSarvam: Boolean
         get() = transcription.baseUrl.contains("sarvam.ai")
 
+    /** True when transcription goes to Munsit with diarization. */
+    val usesMunsit: Boolean
+        get() = transcription.baseUrl.contains("munsit.com") || transcription.baseUrl.contains("faseeh.ai")
+
     /** Summary config with the transcription key filled in when the summary key is blank and compatible. */
     val effectiveSummary: ProviderConfig
-        get() = if (summary.apiKey.isBlank() && !usesElevenLabs && !usesSarvam) {
+        get() = if (summary.apiKey.isBlank() && !usesElevenLabs && !usesSarvam && !usesMunsit) {
             summary.copy(apiKey = transcription.apiKey)
         } else {
             summary
@@ -92,6 +96,11 @@ class SettingsStore(context: Context) {
 
         const val SARVAM_URL = "https://api.sarvam.ai"
         const val SARVAM_MODEL = "saaras:v4"
+
+        const val MUNSIT_URL = "https://api.munsit.com/api/v1"
+        const val MUNSIT_UAE_URL = "https://ae.api.faseeh.ai/api/v1"
+        const val MUNSIT_MODEL = "munsit"
+        const val MUNSIT_EN_AR_MODEL = "munsit-en-ar"
 
         private val RETIRED_MODELS = mapOf("llama-3.3-70b-versatile" to GROQ_SUMMARY_MODEL)
 

@@ -72,5 +72,6 @@
     <string name="speaker_rename_hint">بعد تسمية المتحدثين اضغط \"إعادة إنشاء الملخص\" ليستخدم الملخص الأسماء.</string>
     <string name="settings_preset_speakers">ElevenLabs (المتحدثون)</string>
     <string name="settings_preset_sarvam">Sarvam Saaras (هندي)</string>
+    <string name="settings_preset_munsit">Munsit (عربي)</string>
     <string name="settings_speakers_help">لفصل المتحدثين (Speaker 1 و Speaker 2) اختر ElevenLabs للتفريغ وضع مفتاح ElevenLabs. مفتاح Groq أو OpenAI ينتقل إلى قسم الملخص.</string>
 </resources>

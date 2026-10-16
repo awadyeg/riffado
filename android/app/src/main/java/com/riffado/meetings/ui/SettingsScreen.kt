@@ -79,7 +79,7 @@ fun SettingsScreen(initial: AppSettings, onSave: (AppSettings) -> Unit, onBack: 
             FlowRow(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
                 AssistChip(
                     onClick = {
-                        if (txUrl.contains("elevenlabs.io") || txUrl.contains("sarvam.ai")) txKey = sumKey
+                        if (txUrl.contains("elevenlabs.io") || txUrl.contains("sarvam.ai") || txUrl.contains("munsit.com") || txUrl.contains("faseeh.ai")) txKey = sumKey
                         txUrl = SettingsStore.OPENAI_URL
                         txModel = "whisper-1"
                         sumUrl = SettingsStore.OPENAI_URL
@@ -89,7 +89,7 @@ fun SettingsScreen(initial: AppSettings, onSave: (AppSettings) -> Unit, onBack: 
                 )
                 AssistChip(
                     onClick = {
-                        if (txUrl.contains("elevenlabs.io") || txUrl.contains("sarvam.ai")) txKey = sumKey
+                        if (txUrl.contains("elevenlabs.io") || txUrl.contains("sarvam.ai") || txUrl.contains("munsit.com") || txUrl.contains("faseeh.ai")) txKey = sumKey
                         txUrl = SettingsStore.GROQ_URL
                         txModel = SettingsStore.GROQ_TRANSCRIPTION_MODEL
                         sumUrl = SettingsStore.GROQ_URL
@@ -99,8 +99,8 @@ fun SettingsScreen(initial: AppSettings, onSave: (AppSettings) -> Unit, onBack: 
                 )
                 AssistChip(
                     onClick = {
-                        if (!txUrl.contains("elevenlabs.io") && !txUrl.contains("sarvam.ai") && sumKey.isBlank() && sumUrl == txUrl) sumKey = txKey
-                        if (!txUrl.contains("elevenlabs.io") && !txUrl.contains("sarvam.ai")) txKey = ""
+                        if (!txUrl.contains("elevenlabs.io") && !txUrl.contains("sarvam.ai") && !txUrl.contains("munsit.com") && !txUrl.contains("faseeh.ai") && sumKey.isBlank() && sumUrl == txUrl) sumKey = txKey
+                        if (!txUrl.contains("elevenlabs.io") && !txUrl.contains("sarvam.ai") && !txUrl.contains("munsit.com") && !txUrl.contains("faseeh.ai")) txKey = ""
                         txUrl = SettingsStore.ELEVENLABS_URL
                         txModel = SettingsStore.ELEVENLABS_MODEL
                     },
@@ -118,6 +118,19 @@ fun SettingsScreen(initial: AppSettings, onSave: (AppSettings) -> Unit, onBack: 
                         }
                     },
                     label = { Text(stringResource(R.string.settings_preset_sarvam)) },
+                )
+                AssistChip(
+                    onClick = {
+                        if (!txUrl.contains("munsit.com") && !txUrl.contains("faseeh.ai") && sumKey.isBlank() && sumUrl == SettingsStore.GROQ_URL) sumKey = txKey
+                        if (!txUrl.contains("munsit.com") && !txUrl.contains("faseeh.ai")) txKey = ""
+                        txUrl = SettingsStore.MUNSIT_URL
+                        txModel = SettingsStore.MUNSIT_MODEL
+                        if (sumUrl != SettingsStore.GROQ_URL) {
+                            sumUrl = SettingsStore.GROQ_URL
+                            sumModel = SettingsStore.GROQ_SUMMARY_MODEL
+                        }
+                    },
+                    label = { Text(stringResource(R.string.settings_preset_munsit)) },
                 )
             }
             Text(
