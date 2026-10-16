@@ -75,10 +75,11 @@ class ProcessingWorker(context: Context, params: WorkerParameters) : CoroutineWo
                 app.recordings.update(id) { it.copy(status = RecordingStatus.SUMMARIZING) }
                 val summary = withContext(Dispatchers.IO) {
                     val names = app.recordings.get(id)?.speakerNames ?: emptyMap()
-                    OpenAiClient.chat(
-                        settings.effectiveSummary,
-                        Prompts.MEETING_SYSTEM,
-                        Speakers.applyNames(transcript, names),
+                    val namedTranscript = Speakers.applyNames(transcript, names)
+                    summarizeWithChunking(
+                        recordingId = id,
+                        transcript = namedTranscript,
+                        config = settings.effectiveSummary,
                     )
                 }
                 val generatedTitle = Prompts.titleFrom(summary)
@@ -108,6 +109,107 @@ class ProcessingWorker(context: Context, params: WorkerParameters) : CoroutineWo
                 Result.failure()
             }
         }
+    }
+
+    override suspend fun getForegroundInfo(): ForegroundInfo =
+        foregroundInfo(app.recordings.get(inputData.getString(KEY_ID) ?: "")?.title ?: "")
+    
+    /**
+     * Summarize transcript with automatic chunking for long transcripts.
+     * Uses map-reduce: chunk → summarize each → merge summaries.
+     * Handles 413 and TPM 429 errors by shrinking chunk size and retrying.
+     */
+    private suspend fun summarizeWithChunking(
+        recordingId: String,
+        transcript: String,
+        config: com.riffado.meetings.data.ProviderConfig,
+        initialTokenBudget: Int = 5000,
+    ): String {
+        var tokenBudget = initialTokenBudget
+        var attempt = 0
+        val maxAttempts = 3
+        
+        while (attempt < maxAttempts) {
+            try {
+                // Check if chunking is needed
+                val estimatedTokens = TranscriptChunker.estimateTokens(transcript) + 
+                                    TranscriptChunker.estimateTokens(Prompts.MEETING_SYSTEM)
+                
+                if (estimatedTokens <= tokenBudget) {
+                    // Single chunk fits
+                    Log.d(TAG, "Transcript fits in single request ($estimatedTokens tokens)")
+                    return OpenAiClient.chat(config, Prompts.MEETING_SYSTEM, transcript)
+                }
+                
+                // Split into chunks
+                val chunks = TranscriptChunker.chunkTranscript(transcript, Prompts.MEETING_SYSTEM, tokenBudget)
+                
+                if (chunks.size == 1) {
+                    // Couldn't split further, try anyway
+                    Log.w(TAG, "Transcript too large but couldn't split, attempting anyway")
+                    return OpenAiClient.chat(config, Prompts.MEETING_SYSTEM, transcript)
+                }
+                
+                Log.d(TAG, "Summarizing in ${chunks.size} chunks (budget: $tokenBudget tokens)")
+                
+                // Map: Summarize each chunk
+                val chunkSummaries = chunks.mapIndexed { index, chunk ->
+                    app.recordings.update(recordingId) { 
+                        it.copy(error = "Summarizing part ${index + 1} of ${chunks.size}...")
+                    }
+                    
+                    Log.d(TAG, "Summarizing chunk ${index + 1}/${chunks.size}")
+                    OpenAiClient.chat(
+                        config,
+                        Prompts.CHUNK_SUMMARY_SYSTEM,
+                        chunk,
+                    )
+                }
+                
+                // Reduce: Merge chunk summaries
+                app.recordings.update(recordingId) { 
+                    it.copy(error = "Merging summaries...")
+                }
+                
+                Log.d(TAG, "Merging ${chunkSummaries.size} chunk summaries")
+                val mergedSummary = OpenAiClient.chat(
+                    config,
+                    Prompts.MERGE_SUMMARIES_SYSTEM,
+                    chunkSummaries.joinToString("\n\n---\n\n"),
+                )
+                
+                // Clear progress status
+                app.recordings.update(recordingId) { it.copy(error = null) }
+                
+                return mergedSummary
+                
+            } catch (e: ApiException) {
+                // Check for 413 (payload too large) or 429 with TPM limit
+                val isPayloadTooLarge = e.code == 413
+                val isTPMLimitExceeded = e.code == 429 && e.message?.contains("TPM", ignoreCase = true) == true
+                
+                if ((isPayloadTooLarge || isTPMLimitExceeded) && attempt < maxAttempts - 1) {
+                    // Shrink chunk size and retry
+                    tokenBudget = (tokenBudget * 0.6).toInt() // Reduce by 40%
+                    attempt++
+                    
+                    Log.w(TAG, "Chunking attempt $attempt failed with ${e.code}, shrinking to $tokenBudget tokens")
+                    
+                    // Respect Retry-After if present
+                    val retryAfter = e.message?.let { msg ->
+                        Regex("retry[_\\s]after[:\\s]*(\\d+)", RegexOption.IGNORE_CASE)
+                            .find(msg)?.groupValues?.get(1)?.toLongOrNull()
+                    } ?: 2L
+                    
+                    kotlinx.coroutines.delay(retryAfter * 1000)
+                    continue
+                } else {
+                    throw e
+                }
+            }
+        }
+        
+        throw IllegalStateException("Failed to summarize after $maxAttempts chunking attempts")
     }
 
     override suspend fun getForegroundInfo(): ForegroundInfo =
