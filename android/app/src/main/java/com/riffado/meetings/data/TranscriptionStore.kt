@@ -67,7 +67,26 @@ class TranscriptionStore(context: Context, private val legacySettings: SettingsS
         val providers = json.decodeFromString<List<TranscriptionProviderConfig>>(providersJson)
         val order = json.decodeFromString<List<String>>(orderJson)
         
-        return TranscriptionSettings(providers, order)
+        // Migrate old Gemini model names to current stable model
+        val migratedProviders = providers.map { provider ->
+            if (provider.id == "gemini" && 
+                (provider.model == "gemini-3.6-flash" || 
+                 provider.model == "gemini-1.5-flash-8b" ||
+                 provider.model.contains("1.5-flash"))) {
+                provider.copy(model = SettingsStore.GEMINI_MODEL)
+            } else {
+                provider
+            }
+        }
+        
+        val settings = TranscriptionSettings(migratedProviders, order)
+        
+        // Persist migrated settings if any changes were made
+        if (migratedProviders != providers) {
+            save(settings)
+        }
+        
+        return settings
     }
     
     /**
