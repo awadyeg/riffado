@@ -116,6 +116,7 @@ object GeminiTranscriber {
         audioFile: File,
         language: String,
     ): String {
+        val audioSizeMb = audioFile.length() / (1024.0 * 1024.0)
         
         // Prepare prompt for diarized transcription
         val prompt = buildPrompt(language)
@@ -188,7 +189,7 @@ object GeminiTranscriber {
                 ?: throw TranscriptionException("Empty response from Gemini")
             
             Log.d(TAG, "Gemini transcription complete: ${transcript.length} chars")
-            return@withContext transcript.trim()
+            return transcript.trim()
         } catch (e: Exception) {
             if (e is QuotaExhaustedException || e is TranscriptionException) throw e
             Log.e(TAG, "Failed to parse Gemini response", e)
@@ -342,12 +343,6 @@ object GeminiTranscriber {
             throw TranscriptionException("Failed to upload file to Gemini: ${response.code} ${response.message}")
         }
         
-        @Serializable
-        data class FileUploadResponse(val file: FileInfo)
-        
-        @Serializable
-        data class FileInfo(val name: String, val uri: String)
-        
         val uploadResult = json.decodeFromString<FileUploadResponse>(responseBody)
         Log.d(TAG, "File uploaded successfully: ${uploadResult.file.uri}")
         return uploadResult.file.uri
@@ -377,4 +372,10 @@ object GeminiTranscriber {
     private data class FileData(
         val fileUri: String,
     )
+    
+    @Serializable
+    private data class FileUploadResponse(val file: FileInfo)
+    
+    @Serializable
+    private data class FileInfo(val name: String, val uri: String)
 }
