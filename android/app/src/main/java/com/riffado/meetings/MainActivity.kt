@@ -125,13 +125,13 @@ private fun App(viewModel: AppViewModel, intent: Intent) {
         )
         SETTINGS -> SettingsScreen(
             initial = settings,
-            callRecording = viewModel.app.callRecordings.settings.collectAsStateWithLifecycle().value,
+            callRecording = viewModel.callSettings.collectAsStateWithLifecycle().value,
             onSave = {
                 viewModel.saveSettings(it)
                 Toast.makeText(context, R.string.settings_saved, Toast.LENGTH_SHORT).show()
                 screen = null
             },
-            onSaveCallRecording = { viewModel.app.callRecordings.save(it) },
+            onSaveCallRecording = viewModel::saveCallSettings,
             onBack = { screen = null },
         )
         else -> {

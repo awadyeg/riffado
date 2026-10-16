@@ -18,11 +18,16 @@ class AppViewModel(application: Application) : AndroidViewModel(application) {
     val recordings = app.recordings.recordings
     val settings = app.settings.settings
     val live = RecorderState.live
+    val callSettings = app.callRecordings.settings
 
     fun startRecording() = RecordingService.send(app, RecordingService.ACTION_START)
     fun pauseRecording() = RecordingService.send(app, RecordingService.ACTION_PAUSE)
     fun resumeRecording() = RecordingService.send(app, RecordingService.ACTION_RESUME)
     fun stopRecording() = RecordingService.send(app, RecordingService.ACTION_STOP)
+    
+    fun saveCallSettings(settings: com.riffado.meetings.data.CallRecordingSettings) {
+        app.callRecordings.save(settings)
+    }
 
     fun importAudio(uri: Uri, callback: (String?) -> Unit) {
         viewModelScope.launch {
