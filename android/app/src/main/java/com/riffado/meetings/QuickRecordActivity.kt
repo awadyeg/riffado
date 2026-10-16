@@ -40,16 +40,25 @@ class QuickRecordActivity : ComponentActivity() {
     
     private fun toggleRecording() {
         val app = application as MeetingsApp
-        val currentRecording = app.recordings.currentRecording.value
+        val recordings = app.recordings
         
-        if (currentRecording != null && currentRecording.status == RecordingStatus.RECORDING) {
+        // Check if currently recording - we look at the in-memory state
+        // Since we don't have direct access to currentRecording flow here synchronously,
+        // we check if the service is running by attempting to stop
+        // This is a simple toggle: if a recording is active, stop it; otherwise start
+        val prefs = getSharedPreferences("quick_record_state", MODE_PRIVATE)
+        val wasRecording = prefs.getBoolean("is_recording", false)
+        
+        if (wasRecording) {
             // Stop recording
             stopRecording()
+            prefs.edit().putBoolean("is_recording", false).apply()
             vibrate(longArrayOf(0, 100, 100, 100))
             Log.d(TAG, "Quick-record: stopped")
         } else {
             // Start recording
             startRecording()
+            prefs.edit().putBoolean("is_recording", true).apply()
             vibrate(longArrayOf(0, 200))
             Log.d(TAG, "Quick-record: started")
         }

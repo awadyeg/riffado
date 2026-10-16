@@ -35,6 +35,7 @@ import java.util.UUID
 /** Foreground service that records the meeting with [MediaRecorder], rolling over to a new segment file near [MAX_SEGMENT_BYTES]. */
 class RecordingService : LifecycleService() {
     private val app get() = application as MeetingsApp
+    private val prefs by lazy { getSharedPreferences("quick_record_state", MODE_PRIVATE) }
 
     private var recorder: MediaRecorder? = null
     private var recordingId: String? = null
@@ -71,6 +72,9 @@ class RecordingService : LifecycleService() {
         segments.clear()
         accumulatedMs = 0
         paused = false
+        
+        // Track recording state for Quick Record toggle
+        prefs.edit().putBoolean("is_recording", true).apply()
 
         ServiceCompat.startForeground(
             this,
@@ -91,6 +95,7 @@ class RecordingService : LifecycleService() {
             releaseRecorder()
             app.recordings.segmentFile(first).delete()
             recordingId = null
+            prefs.edit().putBoolean("is_recording", false).apply()
             RecorderState.set(LiveRecording())
             stopSelfCompletely()
             return
@@ -179,6 +184,10 @@ class RecordingService : LifecycleService() {
         val id = recordingId
         val duration = elapsed()
         ticker?.cancel()
+        
+        // Track recording state for Quick Record toggle
+        prefs.edit().putBoolean("is_recording", false).apply()
+        
         try {
             recorder?.stop()
         } catch (e: RuntimeException) {
