@@ -212,9 +212,6 @@ class ProcessingWorker(context: Context, params: WorkerParameters) : CoroutineWo
         throw IllegalStateException("Failed to summarize after $maxAttempts chunking attempts")
     }
 
-    override suspend fun getForegroundInfo(): ForegroundInfo =
-        foregroundInfo(app.recordings.get(inputData.getString(KEY_ID) ?: "")?.title ?: "")
-
     private fun foregroundInfo(title: String): ForegroundInfo {
         val notification = NotificationCompat.Builder(applicationContext, MeetingsApp.CHANNEL_PROCESSING)
             .setSmallIcon(R.drawable.ic_stat_mic)
