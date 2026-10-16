@@ -102,6 +102,13 @@
     <string name="battery_optimization_button">Request Unrestricted Battery</string>
     <string name="battery_samsung_hint">Samsung users: Also add this app to \"Never sleeping apps\" in Settings → Battery → Background usage limits</string>
 
+    <string name="diagnostics_title">Call Recorder Log</string>
+    <string name="diagnostics_clear">Clear log</string>
+    <string name="diagnostics_test">Test recorder (5 sec)</string>
+    <string name="diagnostics_empty">No diagnostic events yet. Make a test call or use Test recorder button.</string>
+    <string name="diagnostics_test_start">Test recording started</string>
+    <string name="diagnostics_test_stop">Test recording stopped</string>
+
     <string name="settings_title">Settings</string>
     <string name="settings_presets">Quick setup</string>
     <string name="settings_transcription">Transcription</string>

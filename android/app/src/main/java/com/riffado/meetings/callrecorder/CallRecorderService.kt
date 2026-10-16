@@ -53,12 +53,20 @@ class CallRecorderService : Service() {
     }
 
     private fun startRecording() {
-        if (recorder != null) return
+        CallRecorderDiagnostics.log(this, "startRecording() called")
+        
+        if (recorder != null) {
+            CallRecorderDiagnostics.log(this, "Already recording, ignoring")
+            return
+        }
 
         val app = application as MeetingsApp
         val callSettings = app.callRecordings.settings.value
         
+        CallRecorderDiagnostics.log(this, "Call recording enabled: ${callSettings.enabled}")
+        
         if (!callSettings.enabled) {
+            CallRecorderDiagnostics.log(this, "Call recording disabled in settings, stopping service")
             stopSelf()
             return
         }
@@ -69,13 +77,30 @@ class CallRecorderService : Service() {
 
         createNotificationChannel()
         
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
-            startForeground(NOTIFICATION_ID, buildNotification(), ServiceInfo.FOREGROUND_SERVICE_TYPE_MICROPHONE or ServiceInfo.FOREGROUND_SERVICE_TYPE_PHONE_CALL)
-        } else {
-            startForeground(NOTIFICATION_ID, buildNotification())
+        try {
+            // Use MICROPHONE type only - PHONE_CALL requires special permissions
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+                startForeground(NOTIFICATION_ID, buildNotification(), ServiceInfo.FOREGROUND_SERVICE_TYPE_MICROPHONE)
+                CallRecorderDiagnostics.log(this, "Foreground service started with MICROPHONE type")
+            } else {
+                startForeground(NOTIFICATION_ID, buildNotification())
+                CallRecorderDiagnostics.log(this, "Foreground service started (legacy)")
+            }
+        } catch (e: Exception) {
+            CallRecorderDiagnostics.log(this, "ERROR starting foreground: ${e.javaClass.simpleName}: ${e.message}")
+            stopSelf()
+            return
         }
 
         val audioSource = callSettings.audioSource
+        val audioSourceName = when (audioSource) {
+            MediaRecorder.AudioSource.VOICE_RECOGNITION -> "VOICE_RECOGNITION"
+            MediaRecorder.AudioSource.VOICE_COMMUNICATION -> "VOICE_COMMUNICATION"
+            MediaRecorder.AudioSource.MIC -> "MIC"
+            else -> "UNKNOWN($audioSource)"
+        }
+        CallRecorderDiagnostics.log(this, "Audio source: $audioSourceName")
+        
         val outputFile = File(filesDir, "recordings/$id-0.m4a").apply { parentFile?.mkdirs() }
 
         try {
@@ -95,7 +120,7 @@ class CallRecorderService : Service() {
                 start()
             }
 
-            Log.d(TAG, "Call recording started: $id")
+            CallRecorderDiagnostics.log(this, "MediaRecorder started successfully: $id")
 
             scope.launch {
                 delay(60000)
@@ -104,11 +129,11 @@ class CallRecorderService : Service() {
                 }
             }
         } catch (e: IllegalStateException) {
-            Log.e(TAG, "Mic in use by another app, cannot record", e)
+            CallRecorderDiagnostics.log(this, "ERROR: Mic in use: ${e.message}")
             savePlaceholder(id, "Microphone in use by another app")
             stopSelf()
         } catch (e: Exception) {
-            Log.e(TAG, "Failed to start call recording", e)
+            CallRecorderDiagnostics.log(this, "ERROR: MediaRecorder failed: ${e.javaClass.simpleName}: ${e.message}")
             savePlaceholder(id, "Recording failed: ${e.message}")
             stopSelf()
         }

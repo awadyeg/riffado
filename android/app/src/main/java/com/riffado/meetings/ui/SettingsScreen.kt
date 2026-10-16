@@ -7,12 +7,14 @@ import android.content.pm.PackageManager
 import android.media.MediaRecorder
 import android.provider.Settings
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ExperimentalLayoutApi
 import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
@@ -233,6 +235,9 @@ fun SettingsScreen(
             
             HorizontalDivider()
             ReliabilityChecklist(context)
+
+            HorizontalDivider()
+            DiagnosticsSection(context)
 
             HorizontalDivider()
             Text(stringResource(R.string.settings_transcription), style = MaterialTheme.typography.titleMedium)
@@ -574,5 +579,99 @@ private fun isNotificationPermissionGranted(context: Context): Boolean {
         ContextCompat.checkSelfPermission(context, Manifest.permission.POST_NOTIFICATIONS) == PackageManager.PERMISSION_GRANTED
     } else {
         true
+    }
+}
+
+@Composable
+private fun DiagnosticsSection(context: Context) {
+    var diagnosticLog by remember { mutableStateOf(com.riffado.meetings.callrecorder.CallRecorderDiagnostics.read(context)) }
+    var isTestRecording by remember { mutableStateOf(false) }
+    
+    Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
+        Text(stringResource(R.string.diagnostics_title), style = MaterialTheme.typography.titleMedium)
+        
+        Row(
+            horizontalArrangement = Arrangement.spacedBy(8.dp),
+            modifier = Modifier.fillMaxWidth(),
+        ) {
+            OutlinedButton(
+                onClick = {
+                    diagnosticLog = com.riffado.meetings.callrecorder.CallRecorderDiagnostics.read(context)
+                },
+                modifier = Modifier.weight(1f),
+            ) {
+                Text("Refresh")
+            }
+            
+            OutlinedButton(
+                onClick = {
+                    com.riffado.meetings.callrecorder.CallRecorderDiagnostics.clear(context)
+                    diagnosticLog = com.riffado.meetings.callrecorder.CallRecorderDiagnostics.read(context)
+                },
+                modifier = Modifier.weight(1f),
+            ) {
+                Text(stringResource(R.string.diagnostics_clear))
+            }
+        }
+        
+        OutlinedButton(
+            onClick = {
+                if (!isTestRecording) {
+                    isTestRecording = true
+                    com.riffado.meetings.callrecorder.CallRecorderDiagnostics.log(context, "TEST: Simulating call recording start")
+                    android.widget.Toast.makeText(context, R.string.diagnostics_test_start, android.widget.Toast.LENGTH_SHORT).show()
+                    
+                    val intent = android.content.Intent(context, com.riffado.meetings.callrecorder.CallRecorderService::class.java).apply {
+                        action = com.riffado.meetings.callrecorder.CallRecorderService.ACTION_START
+                    }
+                    try {
+                        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
+                            context.startForegroundService(intent)
+                        } else {
+                            context.startService(intent)
+                        }
+                    } catch (e: Exception) {
+                        com.riffado.meetings.callrecorder.CallRecorderDiagnostics.log(context, "TEST ERROR: ${e.message}")
+                    }
+                    
+                    kotlinx.coroutines.CoroutineScope(kotlinx.coroutines.Dispatchers.Main).launch {
+                        kotlinx.coroutines.delay(5000)
+                        com.riffado.meetings.callrecorder.CallRecorderDiagnostics.log(context, "TEST: Simulating call recording stop")
+                        val stopIntent = android.content.Intent(context, com.riffado.meetings.callrecorder.CallRecorderService::class.java).apply {
+                            action = com.riffado.meetings.callrecorder.CallRecorderService.ACTION_STOP
+                        }
+                        context.startService(stopIntent)
+                        android.widget.Toast.makeText(context, R.string.diagnostics_test_stop, android.widget.Toast.LENGTH_SHORT).show()
+                        isTestRecording = false
+                        diagnosticLog = com.riffado.meetings.callrecorder.CallRecorderDiagnostics.read(context)
+                    }
+                }
+            },
+            enabled = !isTestRecording,
+            modifier = Modifier.fillMaxWidth(),
+        ) {
+            Text(stringResource(R.string.diagnostics_test))
+        }
+        
+        Card(
+            modifier = Modifier.fillMaxWidth(),
+            colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceVariant),
+        ) {
+            androidx.compose.foundation.layout.Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .heightIn(min = 100.dp, max = 300.dp)
+                    .padding(12.dp)
+                    .verticalScroll(rememberScrollState()),
+            ) {
+                androidx.compose.foundation.text.selection.SelectionContainer {
+                    Text(
+                        diagnosticLog.ifBlank { stringResource(R.string.diagnostics_empty) },
+                        style = MaterialTheme.typography.bodySmall,
+                        fontFamily = androidx.compose.ui.text.font.FontFamily.Monospace,
+                    )
+                }
+            }
+        }
     }
 }

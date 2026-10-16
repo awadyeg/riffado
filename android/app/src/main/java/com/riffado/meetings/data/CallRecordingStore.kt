@@ -32,7 +32,7 @@ class CallRecordingStore(context: Context) {
     }
 
     private fun read(): CallRecordingSettings = CallRecordingSettings(
-        enabled = prefs.getBoolean(K_ENABLED, false),
+        enabled = prefs.getBoolean(K_ENABLED, true),
         audioSource = prefs.getInt(K_AUDIO_SOURCE, MediaRecorder.AudioSource.VOICE_RECOGNITION),
         autoProcess = prefs.getBoolean(K_AUTO_PROCESS, true),
         speakerphoneHint = prefs.getBoolean(K_SPEAKERPHONE_HINT, true),

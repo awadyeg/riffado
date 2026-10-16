@@ -102,6 +102,13 @@
     <string name="battery_optimization_button">طلب بطارية غير مقيدة</string>
     <string name="battery_samsung_hint">مستخدمو Samsung: أضف هذا التطبيق أيضًا إلى \"التطبيقات التي لا تنام أبدًا\" في الإعدادات ← البطارية ← حدود استخدام الخلفية</string>
 
+    <string name="diagnostics_title">سجل التشخيص</string>
+    <string name="diagnostics_clear">مسح السجل</string>
+    <string name="diagnostics_test">اختبار المسجل (5 ث)</string>
+    <string name="diagnostics_empty">لا توجد أحداث تشخيصية بعد. قم بإجراء مكالمة تجريبية أو استخدم زر الاختبار.</string>
+    <string name="diagnostics_test_start">بدأ التسجيل التجريبي</string>
+    <string name="diagnostics_test_stop">توقف التسجيل التجريبي</string>
+
     <string name="settings_title">الإعدادات</string>
     <string name="settings_presets">إعداد سريع</string>
     <string name="settings_transcription">التفريغ</string>
