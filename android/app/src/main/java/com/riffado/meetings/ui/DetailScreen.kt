@@ -147,6 +147,16 @@ fun DetailScreen(
                 style = MaterialTheme.typography.bodySmall,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
             )
+            
+            // Show which provider transcribed this recording
+            if (recording.transcribedBy != null) {
+                Text(
+                    "Transcribed by ${providerDisplayName(recording.transcribedBy)}",
+                    style = MaterialTheme.typography.labelSmall,
+                    color = MaterialTheme.colorScheme.secondary,
+                )
+            }
+            
             if (segmentPaths.isNotEmpty()) AudioPlayer(segmentPaths)
 
             if (recording.status.isBusy) {
@@ -430,4 +440,13 @@ private fun AudioPlayer(paths: List<String>) {
             }
         }
     }
+}
+
+private fun providerDisplayName(providerId: String): String = when (providerId) {
+    "elevenlabs" -> "ElevenLabs"
+    "munsit" -> "Munsit"
+    "gemini" -> "Gemini"
+    "groq" -> "Groq"
+    "sarvam" -> "Sarvam"
+    else -> providerId.replaceFirstChar { it.uppercaseChar() }
 }

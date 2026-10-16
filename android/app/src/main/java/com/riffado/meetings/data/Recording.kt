@@ -35,6 +35,8 @@ data class Recording(
     val callNumber: String? = null,
     /** Contact name for call recordings (null if no contact match). */
     val callContactName: String? = null,
+    /** ID of provider that transcribed this recording (null if not yet transcribed). */
+    val transcribedBy: String? = null,
 ) {
     val isCall: Boolean get() = "call" in tags
     

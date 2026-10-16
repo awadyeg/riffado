@@ -43,22 +43,32 @@ class ProcessingWorker(context: Context, params: WorkerParameters) : CoroutineWo
 
         return try {
             var transcript = recording.transcript
+            var transcribedBy = recording.transcribedBy
+            
             if (!summaryOnly || transcript.isNullOrBlank()) {
-                if (!settings.canTranscribe) throw IllegalStateException("Transcription provider is not configured")
                 app.recordings.update(id) { it.copy(status = RecordingStatus.TRANSCRIBING, error = null) }
                 val files = app.recordings.segmentFiles(recording).filter { it.exists() && it.length() > 0 }
+                
+                // Use transcription coordinator for fallback support
+                val coordinator = TranscriptionCoordinator(applicationContext, app.transcriptionProviders)
+                
                 transcript = withContext(Dispatchers.IO) {
-                    when {
-                        settings.usesElevenLabs -> transcribeWithSpeakers(id, files, settings)
-                        settings.usesSarvam -> transcribeSarvam(files, settings)
-                        settings.usesMunsit -> transcribeMunsit(files, settings)
-                        settings.usesGemini -> transcribeGemini(files, settings)
-                        else -> files.map { OpenAiClient.transcribe(settings.transcription, it, settings.language) }
-                            .filter { it.isNotBlank() }
-                            .joinToString("\n\n")
+                    files.map { file ->
+                        val (segmentTranscript, providerId, _) = coordinator.transcribe(file, settings.language)
+                        transcribedBy = providerId // Track which provider succeeded
+                        segmentTranscript
                     }
+                    .filter { it.isNotBlank() }
+                    .joinToString("\n\n")
                 }
-                app.recordings.update(id) { it.copy(transcript = transcript, speakerNames = emptyMap()) }
+                
+                app.recordings.update(id) { 
+                    it.copy(
+                        transcript = transcript,
+                        speakerNames = emptyMap(),
+                        transcribedBy = transcribedBy,
+                    )
+                }
             }
 
             if (settings.canSummarize && !transcript.isNullOrBlank()) {
@@ -98,53 +108,6 @@ class ProcessingWorker(context: Context, params: WorkerParameters) : CoroutineWo
                 Result.failure()
             }
         }
-    }
-
-    /** ElevenLabs numbers speakers per upload, so segments are joined first to keep speaker numbers consistent. */
-    private fun transcribeWithSpeakers(id: String, files: List<File>, settings: AppSettings): String {
-        if (files.size <= 1) {
-            return files.firstOrNull()?.let { ElevenLabsClient.transcribe(settings.transcription, it, settings.language) }
-                ?: throw IllegalStateException("Recording has no audio")
-        }
-        val joined = File(applicationContext.cacheDir, "$id-joined.m4a")
-        try {
-            AudioConcat.concat(files, joined)
-            return ElevenLabsClient.transcribe(settings.transcription, joined, settings.language)
-        } finally {
-            joined.delete()
-        }
-    }
-
-    /** Sarvam transcribes each segment individually, then joins the results. */
-    private fun transcribeSarvam(files: List<File>, settings: AppSettings): String {
-        if (files.isEmpty()) throw IllegalStateException("Recording has no audio")
-        return files.map { SarvamClient.transcribe(settings.transcription, it, settings.language) }
-            .filter { it.isNotBlank() }
-            .joinToString("\n\n")
-    }
-
-    /** Munsit transcribes with diarization, each segment individually, then joins the results. */
-    private fun transcribeMunsit(files: List<File>, settings: AppSettings): String {
-        if (files.isEmpty()) throw IllegalStateException("Recording has no audio")
-        return files.map { MunsitClient.transcribe(settings.transcription, it, settings.language) }
-            .filter { it.isNotBlank() }
-            .joinToString("\n\n")
-    }
-    
-    /** Gemini transcribes with diarization using inline audio API. Each segment individually, then joins. */
-    private suspend fun transcribeGemini(files: List<File>, settings: AppSettings): String {
-        if (files.isEmpty()) throw IllegalStateException("Recording has no audio")
-        return files.map { file ->
-            GeminiTranscriber.transcribe(
-                baseUrl = settings.transcription.baseUrl,
-                apiKey = settings.transcription.apiKey,
-                model = settings.transcription.model,
-                audioFile = file,
-                language = settings.language,
-            )
-        }
-            .filter { it.isNotBlank() }
-            .joinToString("\n\n")
     }
 
     override suspend fun getForegroundInfo(): ForegroundInfo =

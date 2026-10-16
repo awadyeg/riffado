@@ -7,6 +7,7 @@ import androidx.core.content.getSystemService
 import com.riffado.meetings.data.CallRecordingStore
 import com.riffado.meetings.data.RecordingStore
 import com.riffado.meetings.data.SettingsStore
+import com.riffado.meetings.data.TranscriptionStore
 import com.riffado.meetings.recording.RecorderState
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.SupervisorJob
@@ -19,6 +20,8 @@ class MeetingsApp : Application() {
         private set
     lateinit var callRecordings: CallRecordingStore
         private set
+    lateinit var transcriptionProviders: TranscriptionStore
+        private set
 
     val appScope = CoroutineScope(SupervisorJob())
 
@@ -28,6 +31,7 @@ class MeetingsApp : Application() {
         recordings = RecordingStore(this)
         settings = SettingsStore(this)
         callRecordings = CallRecordingStore(this)
+        transcriptionProviders = TranscriptionStore(this, settings)
         createChannels()
         appScope.launch { recordings.recoverInterrupted(RecorderState.live.value.recordingId) }
     }
