@@ -54,6 +54,7 @@ fun HomeScreen(
     live: LiveRecording,
     configured: Boolean,
     onRecord: () -> Unit,
+    onImport: () -> Unit,
     onPause: () -> Unit,
     onResume: () -> Unit,
     onStop: () -> Unit,
@@ -78,6 +79,14 @@ fun HomeScreen(
             verticalArrangement = Arrangement.spacedBy(12.dp),
         ) {
             item { RecorderCard(live, onRecord, onPause, onResume, onStop) }
+            item {
+                TextButton(
+                    onClick = onImport,
+                    modifier = Modifier.fillMaxWidth(),
+                ) {
+                    Text(stringResource(R.string.action_import))
+                }
+            }
             if (!configured) {
                 item {
                     Card(

@@ -1,11 +1,13 @@
 package com.riffado.meetings.ui
 
 import android.app.Application
+import android.net.Uri
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
 import com.riffado.meetings.MeetingsApp
 import com.riffado.meetings.ai.ProcessingWorker
 import com.riffado.meetings.data.AppSettings
+import com.riffado.meetings.data.AudioImporter
 import com.riffado.meetings.recording.RecorderState
 import com.riffado.meetings.recording.RecordingService
 import kotlinx.coroutines.launch
@@ -21,6 +23,13 @@ class AppViewModel(application: Application) : AndroidViewModel(application) {
     fun pauseRecording() = RecordingService.send(app, RecordingService.ACTION_PAUSE)
     fun resumeRecording() = RecordingService.send(app, RecordingService.ACTION_RESUME)
     fun stopRecording() = RecordingService.send(app, RecordingService.ACTION_STOP)
+
+    fun importAudio(uri: Uri, callback: (String?) -> Unit) {
+        viewModelScope.launch {
+            val id = AudioImporter.importAudio(app, uri, app.recordings)
+            callback(id)
+        }
+    }
 
     fun process(id: String, summaryOnly: Boolean) {
         viewModelScope.launch { ProcessingWorker.enqueue(app, id, summaryOnly) }

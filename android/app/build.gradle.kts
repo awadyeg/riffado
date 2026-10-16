@@ -28,7 +28,10 @@ android {
 
     buildTypes {
         debug {
+            applicationIdSuffix = ".v2"
+            versionNameSuffix = "-v2"
             signingConfig = signingConfigs.getByName("debug")
+            resValue("string", "app_name", "Awady meetings v2")
         }
         release {
             isMinifyEnabled = true

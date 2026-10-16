@@ -14,6 +14,7 @@
     <string name="action_resume">استكمال</string>
     <string name="action_stop">إنهاء</string>
     <string name="action_record">ابدأ التسجيل</string>
+    <string name="action_import">استيراد ملف صوت</string>
     <string name="action_settings">الإعدادات</string>
     <string name="action_back">رجوع</string>
     <string name="action_delete">حذف</string>
@@ -54,6 +55,9 @@
     <string name="rename_title">إعادة تسمية</string>
 
     <string name="permission_needed">يلزم إذن الميكروفون للتسجيل.</string>
+
+    <string name="import_success">تم استيراد الملف الصوتي</string>
+    <string name="import_failed">فشل استيراد الملف الصوتي</string>
 
     <string name="settings_title">الإعدادات</string>
     <string name="settings_presets">إعداد سريع</string>
